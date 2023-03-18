@@ -1,2 +1,0 @@
-# SIA
-Trabajos Prácticos 
