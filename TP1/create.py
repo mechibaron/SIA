@@ -2,6 +2,7 @@ import numpy as np
 import arcade
 import random
 import matplotlib.pyplot as plt
+import time
 
 # Set how many rows and columns we will have
 ROW_COUNT = 16
@@ -46,8 +47,7 @@ class MyGame(arcade.Window):
         # Set the background color of the window
         self.background_color = arcade.color.BLACK
         bfs_cost= []
-
-        for _ in range(TRIES_AMOUNT):
+        for i in range(TRIES_AMOUNT):
             self.grid = []
             for row in range(ROW_COUNT):
                 self.grid.append([])
@@ -70,8 +70,26 @@ class MyGame(arcade.Window):
                         arcade.draw_rectangle_filled(x, y, WIDTH, HEIGHT, color)# Append a cell
             
             bfs_cost.append(bfs_algorithm(self))
+            print('El tiempo en ejecucion fue de: ', bfs_cost[i][2]) 
+            print('El numero de nodos expandidos es de: ', bfs_cost[i][1]) 
+            print('El numero de nodos frontera es de: ', bfs_cost[i][3])
+            print('El costo es de: ', bfs_cost[i][0])
         
-        print('El costo final es de: ', np.sum(bfs_cost)/ TRIES_AMOUNT) #15x15 6 colores
+        # Promedio en TRIES_AMOUNT tiradas
+        time = 0
+        expanded_nodes=0
+        border_nodes=0
+        cost = 0
+        for trie in bfs_cost:
+            time+=trie[2]
+            expanded_nodes+=trie[1]
+            border_nodes+=trie[3]
+            cost+=trie[0]
+
+        print('El tiempo promedio es de: ', time / TRIES_AMOUNT) 
+        print('El numero de nodos expandidos promedio es de: ', expanded_nodes / TRIES_AMOUNT) 
+        print('El numero de nodos frontera promedio es de: ', border_nodes/ TRIES_AMOUNT) 
+        print('El costo promedio es de: ', cost / TRIES_AMOUNT) 
         plt.figure(figsize=(25,5))
         plt.plot(bfs_cost,marker ="o")
         plt.title('Distribución de costos a lo largo de 100 intentos')
@@ -135,8 +153,11 @@ def it_fill_zone(self, row,column, first_color, selected_color):
         it_fill_zone(self, row, column+1, first_color, selected_color)
 
 def bfs_algorithm(self):
+    inicio = time.time()
     win = fill_zone_win(self, self.grid[ROW_COUNT-2][COLUMN_COUNT-1])
     count_cost = 0
+    expanded_nodes_count=0
+    border_nodes=0
     while win==False:
         first_color = self.grid[ROW_COUNT - 2][0]
         principal_block = [[self.grid[ROW_COUNT-2][0], ROW_COUNT - 2, 0]]
@@ -150,10 +171,13 @@ def bfs_algorithm(self):
 
         color_neighbours=[]
 
-        for blocks in principal_block:
-            neighbours = get_neighbours(self, blocks[1], blocks[2],principal_block)
+        for block in principal_block:
+            neighbours = get_neighbours(self, block, principal_block)
             for n in neighbours:
                 color_neighbours.append(n)
+        
+        #Cuento los nodos frontera => todos los vecinos de bloque principal 
+        border_nodes+=color_neighbours.__len__()
         
         # Cuento cuantos hay de cada color
         colors_amount= [[0,0], [1,0], [2,0], [3,0], [4,0], [5,0]]
@@ -171,7 +195,7 @@ def bfs_algorithm(self):
                 colors_amount[4][1]+=1
             elif (neighbour[0] == colors[5]):
                 colors_amount[5][1]+=1
-            
+
         # Veo cual es el color que mas aparece
         color_selected = 0
         color_count = 0
@@ -179,11 +203,20 @@ def bfs_algorithm(self):
             if(color[1]>color_count):
                 color_selected = color[0]
                 color_count = color[1]
+
+        # Veo que nodos expandi => me fijo de quien es vecino el nodo a pintar y los cuento (tengo en cuenta fijarme si no lo conte antes)
+        expanded_nodes = []
+        for neighbour in color_neighbours:
+            if ((neighbour[0] == colors[color_selected]) and (belong_to(expanded_nodes, neighbour[3][0], neighbour[3][1], neighbour[3][2]))== False):
+                expanded_nodes.append(neighbour[3])
+                expanded_nodes_count+=1
+
+
         count_cost +=1
         fill_zone(self, colors[color_selected], first_color)
         win = fill_zone_win(self, self.grid[ROW_COUNT-2][0])
-
-    return count_cost
+    fin = time.time()
+    return [count_cost, expanded_nodes_count, fin-inicio, border_nodes]
 
 def get_color_neighbours(self, x, y, color,principal_block):
     dx = [-1, 0, 1, 0]  # cambios en x para obtener los vecinos
@@ -218,16 +251,16 @@ def in_grid(x, y):
     return False
 
 # Función para obtener las posiciones adyacentes en la matriz
-def get_neighbours(self, x, y,principal_block):
+def get_neighbours(self, block,principal_block):
     dx = [-1, 0, 1, 0]  # cambios en x para obtener los vecinos
     dy = [0, 1, 0, -1]  # cambios en y para obtener los vecinos
     vecinos=[]
     for i in range(4):
-        nx = x + dx[i]
-        ny = y + dy[i]
+        nx = block[1] + dx[i]
+        ny = block[2] + dy[i]
         if(in_grid(nx, ny)==True):
             if (belong_to(principal_block,self.grid[nx][ny],nx,ny) == False):
-                vecinos.append([self.grid[nx][ny],nx,ny])
+                vecinos.append([self.grid[nx][ny],nx,ny, block])
     return vecinos
     
 
