@@ -90,6 +90,7 @@ class MyGame(arcade.Window):
         print('El numero de nodos expandidos promedio es de: ', expanded_nodes / TRIES_AMOUNT) 
         print('El numero de nodos frontera promedio es de: ', border_nodes/ TRIES_AMOUNT) 
         print('El costo promedio es de: ', cost / TRIES_AMOUNT) 
+
         plt.figure(figsize=(25,5))
         plt.plot(bfs_cost,marker ="o")
         plt.title('Distribución de costos a lo largo de 100 intentos')
@@ -172,7 +173,7 @@ def bfs_algorithm(self):
         color_neighbours=[]
 
         for block in principal_block:
-            neighbours = get_neighbours(self, block, principal_block)
+            neighbours = get_neighbours(self, block, principal_block, color_neighbours)
             for n in neighbours:
                 color_neighbours.append(n)
         
@@ -251,7 +252,7 @@ def in_grid(x, y):
     return False
 
 # Función para obtener las posiciones adyacentes en la matriz
-def get_neighbours(self, block,principal_block):
+def get_neighbours(self, block,principal_block, color_neighbours):
     dx = [-1, 0, 1, 0]  # cambios en x para obtener los vecinos
     dy = [0, 1, 0, -1]  # cambios en y para obtener los vecinos
     vecinos=[]
@@ -259,7 +260,7 @@ def get_neighbours(self, block,principal_block):
         nx = block[1] + dx[i]
         ny = block[2] + dy[i]
         if(in_grid(nx, ny)==True):
-            if (belong_to(principal_block,self.grid[nx][ny],nx,ny) == False):
+            if ((belong_to(principal_block,self.grid[nx][ny],nx,ny) == False) and (belong_to(color_neighbours,self.grid[nx][ny],nx,ny) == False)):
                 vecinos.append([self.grid[nx][ny],nx,ny, block])
     return vecinos
     
