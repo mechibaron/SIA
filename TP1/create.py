@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 import time
 
 # Set how many rows and columns we will have
-ROW_COUNT = 16
-COLUMN_COUNT = 15
-COLORS_COUNT = 6
+ROW_COUNT = 21
+COLUMN_COUNT = 20
+COLORS_COUNT = 5
 
 # This sets the WIDTH and HEIGHT of each grid location
 WIDTH = 30 
@@ -30,7 +30,9 @@ colors = {
     2: arcade.color.BLUE,
     3: arcade.color.GREEN,
     4: arcade.color.PINK,
-    5:arcade.color.YELLOW
+    # 5:arcade.color.YELLOW,
+    # 6: arcade.color.PURPLE,
+    # 7: arcade.color.ORANGE
 }
 
 class MyGame(arcade.Window):
@@ -70,10 +72,11 @@ class MyGame(arcade.Window):
                         arcade.draw_rectangle_filled(x, y, WIDTH, HEIGHT, color)# Append a cell
             
             bfs_cost.append(bfs_algorithm(self))
-            print('El tiempo en ejecucion fue de: ', bfs_cost[i][2]) 
-            print('El numero de nodos expandidos es de: ', bfs_cost[i][1]) 
-            print('El numero de nodos frontera es de: ', bfs_cost[i][3])
-            print('El costo es de: ', bfs_cost[i][0])
+            print(i)
+            # print('El tiempo en ejecucion fue de: ', bfs_cost[i][2]) 
+            # print('El numero de nodos expandidos es de: ', bfs_cost[i][1]) 
+            # print('El numero de nodos frontera es de: ', bfs_cost[i][3])
+            # print('El costo es de: ', bfs_cost[i][0])
         
         # Promedio en TRIES_AMOUNT tiradas
         time = 0
@@ -86,6 +89,7 @@ class MyGame(arcade.Window):
             border_nodes+=trie[3]
             cost+=trie[0]
 
+        print(bfs_cost)
         print('El tiempo promedio es de: ', time / TRIES_AMOUNT) 
         print('El numero de nodos expandidos promedio es de: ', expanded_nodes / TRIES_AMOUNT) 
         print('El numero de nodos frontera promedio es de: ', border_nodes/ TRIES_AMOUNT) 
@@ -181,7 +185,8 @@ def bfs_algorithm(self):
         border_nodes+=color_neighbours.__len__()
         
         # Cuento cuantos hay de cada color
-        colors_amount= [[0,0], [1,0], [2,0], [3,0], [4,0], [5,0]]
+        colors_amount= [[0,0], [1,0], [2,0], [3,0], [4,0],]
+        # colors_amount= [[0,0], [1,0], [2,0], [3,0], [4,0], [5,0], [6,0],[7,0]]
 
         for neighbour in color_neighbours:
             if (neighbour[0] == colors[0]):
@@ -194,8 +199,12 @@ def bfs_algorithm(self):
                 colors_amount[3][1]+=1
             elif (neighbour[0] == colors[4]):
                 colors_amount[4][1]+=1
-            elif (neighbour[0] == colors[5]):
-                colors_amount[5][1]+=1
+            # elif (neighbour[0] == colors[5]):
+            #     colors_amount[5][1]+=1
+            # elif (neighbour[0] == colors[6]):
+            #     colors_amount[6][1]+=1
+            # elif (neighbour[0] == colors[7]):
+            #     colors_amount[7][1]+=1
 
         # Veo cual es el color que mas aparece
         color_selected = 0
