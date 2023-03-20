@@ -1,25 +1,7 @@
 import numpy as np
 import arcade
 import random
-from collections import deque
-
-
-
-"""
-Array Backed Grid Shown By Sprites
-
-Show how to use a two-dimensional list/array to back the display of a
-grid on-screen.
-
-This version makes a grid of sprites instead of numbers. Instead of
-interating all the cells when the grid changes we simply just
-swap the color of the selected sprite. This means this version
-can handle very large grids and still have the same performance.
-
-If Python and Arcade are installed, this example can be run from the command line with:
-python -m arcade.examples.array_backed_grid_sprites_2
-"""
-
+import matplotlib.pyplot as plt
 
 # Set how many rows and columns we will have
 ROW_COUNT = 16
@@ -33,6 +15,8 @@ HEIGHT = 30
 # This sets the margin between each cell
 # and on the edges of the screen.
 MARGIN = 5
+
+TRIES_AMOUNT = 100
 
 # Do the math to figure out our screen dimensions
 SCREEN_WIDTH = (WIDTH + MARGIN) * COLUMN_COUNT + MARGIN
@@ -61,29 +45,52 @@ class MyGame(arcade.Window):
 
         # Set the background color of the window
         self.background_color = arcade.color.BLACK
+        bfs_cost= []
 
-        self.grid = []
-        for row in range(ROW_COUNT):
-            self.grid.append([])
-            for column in range(COLUMN_COUNT):
-                if row == ROW_COUNT - 1 :
-                    if column < COLORS_COUNT:
-                        color=colors[column]  
+        for _ in range(TRIES_AMOUNT):
+            self.grid = []
+            for row in range(ROW_COUNT):
+                self.grid.append([])
+                for column in range(COLUMN_COUNT):
+                    if row == ROW_COUNT - 1 :
+                        if column < COLORS_COUNT:
+                            color=colors[column]  
+                            self.grid[row].append(color)
+                            x = (MARGIN + WIDTH) * column + MARGIN + WIDTH // 2
+                            y = (MARGIN + HEIGHT) * row + MARGIN + HEIGHT // 2
+                            # Draw the box
+                            arcade.draw_rectangle_filled(x, y, WIDTH, HEIGHT, color)  # Append a cell
+                    else:
+                        color=colors[random.randrange(0,5)]  
                         self.grid[row].append(color)
                         x = (MARGIN + WIDTH) * column + MARGIN + WIDTH // 2
                         y = (MARGIN + HEIGHT) * row + MARGIN + HEIGHT // 2
-                        # Draw the box
-                        arcade.draw_rectangle_filled(x, y, WIDTH, HEIGHT, color)  # Append a cell
-                else:
-                    color=colors[random.randrange(0,5)]  
-                    self.grid[row].append(color)
-                    x = (MARGIN + WIDTH) * column + MARGIN + WIDTH // 2
-                    y = (MARGIN + HEIGHT) * row + MARGIN + HEIGHT // 2
 
-                    # Draw the box
-                    arcade.draw_rectangle_filled(x, y, WIDTH, HEIGHT, color)# Append a cell
+                        # Draw the box
+                        arcade.draw_rectangle_filled(x, y, WIDTH, HEIGHT, color)# Append a cell
+            
+            bfs_cost.append(bfs_algorithm(self))
         
-        bfs_algorithm(self)
+        print('El costo final es de: ', np.sum(bfs_cost)/ TRIES_AMOUNT) #15x15 6 colores
+        plt.figure(figsize=(25,5))
+        plt.plot(bfs_cost,marker ="o")
+        plt.title('Distribución de costos a lo largo de 100 intentos')
+        plt.ylim([10,40])
+        plt.ylabel('Costo')
+        plt.xlabel('Número de intentos')
+        plt.show()
+        # a = [1, 3, 5, 7]
+        # b = [11, 2, 4, 19]
+  
+        # # Plot scatter here
+        # plt.bar(a, b)
+        
+        # c = [1, 3, 2, 1]
+        
+        # plt.errorbar(a, b, yerr=c, fmt="o", color="r")
+        
+        # plt.show()
+        
 
     def on_mouse_press(self, x, y, button, modifiers):
         """
@@ -176,7 +183,7 @@ def bfs_algorithm(self):
         fill_zone(self, colors[color_selected], first_color)
         win = fill_zone_win(self, self.grid[ROW_COUNT-2][0])
 
-    print("El costo fue de: ",count_cost)
+    return count_cost
 
 def get_color_neighbours(self, x, y, color,principal_block):
     dx = [-1, 0, 1, 0]  # cambios en x para obtener los vecinos
@@ -227,6 +234,7 @@ def get_neighbours(self, x, y,principal_block):
 def main():
     MyGame(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
     arcade.run()
+        
 
 if __name__ == "__main__":
     main()
