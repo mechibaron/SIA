@@ -257,6 +257,8 @@ def in_grid(x, y):
     return False
 
 # Función para obtener las posiciones adyacentes en la matriz
+#devuelve en el primero el color, en el segundo valor en ex, el tercero el valor en y el cuarto el padre.
+#sin repetidos y desordenados
 def get_neighbours(self, block,principal_block, color_neighbours):
     dx = [-1, 0, 1, 0]  # cambios en x para obtener los vecinos
     dy = [0, 1, 0, -1]  # cambios en y para obtener los vecinos
@@ -272,75 +274,72 @@ def get_neighbours(self, block,principal_block, color_neighbours):
 # Definimos que la metrica de profundidad refiere a dar un paso para abajo y luego para la derecha 
 def dfs_algorith(self):
     init = time.time()
-    win = fill_zone_win(self, self.grid[ROW_COUNT-2][COLUMN_COUNT-1])
+    finished = False
+    expanded_nodes_count = 0
     cost = 0
-    expanded_nodes_count=0
-    border_nodes=0
-    while win==False:
-        first_color = self.grid[ROW_COUNT - 2][0]
+    while finished == False:
+        first_color = self.grid[FIRST_ROW][FIRST_COLUMN]
+        visited = [[0 for _ in range(COLUMN_COUNT)] for _ in range(ROW_COUNT)]
         principal_block = [[self.grid[ROW_COUNT-2][0], ROW_COUNT - 2, 0]]
-        queue=[[self.grid[ROW_COUNT-2][0], ROW_COUNT - 2, 0]]
-        while queue:
-            block = queue.pop(0)
-            block_neighbours = get_color_neighbours(self, block[1], block[2], block[0],principal_block)
-            for neighbour in block_neighbours:
-                queue.append(neighbour)
-                principal_block.append(neighbour)
-
-        color_neighbours=[]
-
-        for block in principal_block:
-            neighbours = get_neighbours(self, block, principal_block, color_neighbours)
-            for n in neighbours:
-                color_neighbours.append(n)
-        
-        #Cuento los nodos frontera => todos los vecinos de bloque principal 
-        border_nodes+=color_neighbours.__len__()
-        
-        # Cuento cuantos hay de cada color
-        colors_amount= [[0,0], [1,0], [2,0], [3,0], [4,0], [5,0]]
-
-        for neighbour in color_neighbours:
-            if (neighbour[0] == colors[0]):
-                colors_amount[0][1]+=1
-            elif (neighbour[0] == colors[1]):
-                colors_amount[1][1]+=1        
-            elif (neighbour[0] == colors[2]):
-                colors_amount[2][1]+=1
-            elif (neighbour[0] == colors[3]):
-                colors_amount[3][1]+=1
-            elif (neighbour[0] == colors[4]):
-                colors_amount[4][1]+=1
-            elif (neighbour[0] == colors[5]):
-                colors_amount[5][1]+=1
-
-        # Veo cual es el color que mas aparece
-        color_selected = 0
-        color_count = 0
-        for color in colors_amount:
-            if(color[1]>color_count):
-                color_selected = color[0]
-                color_count = color[1]
- #   finished = False
- #   while finished == False:
- #       first_color = self.grid[FIRST_ROW][FIRST_COLUMN]
- #       grid = [[self.grid[FIRST_ROW][FIRST_COLUMN], FIRST_ROW, FIRST_COLUMN]]
-        #priority_queue = [first_neighbours]
- #       while len(priority_queue) > 0:
- #           node = priority_queue.pop(0)
+        priority_queue = get_neighbours_sorted(self,[[self.grid[ROW_COUNT-2][0], ROW_COUNT - 2, 0]],[[self.grid[ROW_COUNT-2][0], ROW_COUNT - 2, 0]],first_color)
+        while len(priority_queue) > 0:
+            node = priority_queue.pop(0)
             # explorar los vecinos de node del mismo color
- #           if self.color != node:
- #               new_node = node.()
+            block_neighbours = get_color_neighbours_sorted(self, node[0][1], node[0][2], node[0][0],principal_block)
+            
+            for neighbour in block_neighbours:
+                priority_queue.insert(0,neighbour)
+                principal_block.insert(0,neighbour)
+
+            color_neighbours=[]
+
+            for block in principal_block:
+                neighbours = get_neighbours_sorted(self, block, principal_block, color_neighbours)
+                for i in range(len(neighbours)):
+                    color_neighbours.insert(0,neighbours[-1 - i]) # -1 -i porque queremos que arranqe al final y nos vaya poniendo al principio
+    
+            # marco como visit el nodo en cuestion y los nodos vecinos del mismo color 
             
 
-            # explorar todos los vecinos
-            # contar la cantidad de vecinos por cada color para decidir por que color vamos a pintar.
-            # seleccionamos el color que tenga mas y pinto los nodos vecinos del mismo color, del color seleccionado
-            # cuento por cada vez que tenga que pintar (ese va a ser el peso)
-            # vuelvo a fijarme todos los neighbours, voy a explorar el primero que explore. 
-            # calculo si gane o todavia no
+            cost +=1
+            fill_zone(self, colors[node[0][0]], first_color)
+
+            # gane?
+            finished = fill_zone_win(self, self.grid[ROW_COUNT-2][0])
+
+        # buscar los vecinos del nodo en cuestion nodo0 (primer caso: 14 0) -> ponerlos en la pq 
+        # vamos al nodo de la izquierda (nodo1)y explotamos. 
+        # buscar los nodos adyacentes del nodo1 que tengan el mismo color y marcar como un bloque de nodos. (nodos que vamos comiendo)
+        # update la pq con los nuevos nodos (los vecinos de nodo1 del mismo color). La prioridad va a ser del de mas a la izquiera. 
+        # volver a empezar siendo el nodo en cuestion el nodo de mayor prioridad. 
+
+        # prioridad: Rigth Down Left Up
     end = time.time()
     return [end - init, cost]
+
+def get_neighbours_sorted(self, block, principal_block, color_neighbours):
+    dx = [1, 0, -1, 0]  # cambios en x para obtener los vecinos
+    dy = [0, 1, 0, -1]  # cambios en y para obtener los vecinos
+    vecinos=[]
+    for i in range(4):
+        nx = block[1] + dx[i]
+        ny = block[2] + dy[i]
+        if(in_grid(nx, ny)==True):
+            if ((belong_to(principal_block,self.grid[nx][ny],nx,ny) == False) and (belong_to(color_neighbours,self.grid[nx][ny],nx,ny) == False)):
+                vecinos.append([self.grid[nx][ny],nx,ny, block])
+    return vecinos
+
+def get_color_neighbours_sorted(self, x, y, color,principal_block):
+    dx = [1, 0, -1, 0]  # cambios en x para obtener los vecinos
+    dy = [0, 1, 0, -1]  # cambios en y para obtener los vecinos
+    vecinos = []
+    for i in range(4):
+        nx = x + dx[i]
+        ny = y + dy[i]
+        if((in_grid(nx, ny)==True)):
+            if ((self.grid[nx][ny] == color) and (belong_to(principal_block, self.grid[nx][ny],nx,ny))==False):
+                vecinos.append([self.grid[nx][ny], nx, ny])
+    return vecinos
 
 def main():
     MyGame(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
@@ -351,9 +350,7 @@ if __name__ == "__main__":
     main()
 
 
-# prioridad metricas = R D L U
-
-# 1 2 3 4 5
+# 1 2 2 4 5
 # 3 4 5 2 1
 # 4 3 2 4 1
 # 5 4 3 2 1
