@@ -9,6 +9,9 @@ ROW_COUNT = 16
 COLUMN_COUNT = 15
 COLORS_COUNT = 6
 
+FIRST_ROW = ROW_COUNT - 2
+FIRST_COLUMN = 0
+
 # This sets the WIDTH and HEIGHT of each grid location
 WIDTH = 30 
 HEIGHT = 30
@@ -47,6 +50,7 @@ class MyGame(arcade.Window):
         # Set the background color of the window
         self.background_color = arcade.color.BLACK
         bfs_cost= []
+        dfs_cost = []
         for i in range(TRIES_AMOUNT):
             self.grid = []
             for row in range(ROW_COUNT):
@@ -70,10 +74,11 @@ class MyGame(arcade.Window):
                         arcade.draw_rectangle_filled(x, y, WIDTH, HEIGHT, color)# Append a cell
             
             bfs_cost.append(bfs_algorithm(self))
-            print('El tiempo en ejecucion fue de: ', bfs_cost[i][2]) 
-            print('El numero de nodos expandidos es de: ', bfs_cost[i][1]) 
-            print('El numero de nodos frontera es de: ', bfs_cost[i][3])
-            print('El costo es de: ', bfs_cost[i][0])
+            dfs_cost.append(dfs_algorith(self))
+            print('El tiempo en ejecucion bfs fue de: ', bfs_cost[i][2]) 
+            print('El numero de nodos expandidos de bfs es de: ', bfs_cost[i][1]) 
+            print('El numero de nodos frontera en bfd es de: ', bfs_cost[i][3])
+            print('El costo de bfs es de: ', bfs_cost[i][0])
         
         # Promedio en TRIES_AMOUNT tiradas
         time = 0
@@ -264,6 +269,78 @@ def get_neighbours(self, block,principal_block, color_neighbours):
                 vecinos.append([self.grid[nx][ny],nx,ny, block])
     return vecinos
     
+# Definimos que la metrica de profundidad refiere a dar un paso para abajo y luego para la derecha 
+def dfs_algorith(self):
+    init = time.time()
+    win = fill_zone_win(self, self.grid[ROW_COUNT-2][COLUMN_COUNT-1])
+    cost = 0
+    expanded_nodes_count=0
+    border_nodes=0
+    while win==False:
+        first_color = self.grid[ROW_COUNT - 2][0]
+        principal_block = [[self.grid[ROW_COUNT-2][0], ROW_COUNT - 2, 0]]
+        queue=[[self.grid[ROW_COUNT-2][0], ROW_COUNT - 2, 0]]
+        while queue:
+            block = queue.pop(0)
+            block_neighbours = get_color_neighbours(self, block[1], block[2], block[0],principal_block)
+            for neighbour in block_neighbours:
+                queue.append(neighbour)
+                principal_block.append(neighbour)
+
+        color_neighbours=[]
+
+        for block in principal_block:
+            neighbours = get_neighbours(self, block, principal_block, color_neighbours)
+            for n in neighbours:
+                color_neighbours.append(n)
+        
+        #Cuento los nodos frontera => todos los vecinos de bloque principal 
+        border_nodes+=color_neighbours.__len__()
+        
+        # Cuento cuantos hay de cada color
+        colors_amount= [[0,0], [1,0], [2,0], [3,0], [4,0], [5,0]]
+
+        for neighbour in color_neighbours:
+            if (neighbour[0] == colors[0]):
+                colors_amount[0][1]+=1
+            elif (neighbour[0] == colors[1]):
+                colors_amount[1][1]+=1        
+            elif (neighbour[0] == colors[2]):
+                colors_amount[2][1]+=1
+            elif (neighbour[0] == colors[3]):
+                colors_amount[3][1]+=1
+            elif (neighbour[0] == colors[4]):
+                colors_amount[4][1]+=1
+            elif (neighbour[0] == colors[5]):
+                colors_amount[5][1]+=1
+
+        # Veo cual es el color que mas aparece
+        color_selected = 0
+        color_count = 0
+        for color in colors_amount:
+            if(color[1]>color_count):
+                color_selected = color[0]
+                color_count = color[1]
+ #   finished = False
+ #   while finished == False:
+ #       first_color = self.grid[FIRST_ROW][FIRST_COLUMN]
+ #       grid = [[self.grid[FIRST_ROW][FIRST_COLUMN], FIRST_ROW, FIRST_COLUMN]]
+        #priority_queue = [first_neighbours]
+ #       while len(priority_queue) > 0:
+ #           node = priority_queue.pop(0)
+            # explorar los vecinos de node del mismo color
+ #           if self.color != node:
+ #               new_node = node.()
+            
+
+            # explorar todos los vecinos
+            # contar la cantidad de vecinos por cada color para decidir por que color vamos a pintar.
+            # seleccionamos el color que tenga mas y pinto los nodos vecinos del mismo color, del color seleccionado
+            # cuento por cada vez que tenga que pintar (ese va a ser el peso)
+            # vuelvo a fijarme todos los neighbours, voy a explorar el primero que explore. 
+            # calculo si gane o todavia no
+    end = time.time()
+    return [end - init, cost]
 
 def main():
     MyGame(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
@@ -272,3 +349,13 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# prioridad metricas = R D L U
+
+# 1 2 3 4 5
+# 3 4 5 2 1
+# 4 3 2 4 1
+# 5 4 3 2 1
+# 3 5 4 1 2
+
