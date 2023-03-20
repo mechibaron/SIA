@@ -97,8 +97,6 @@ class MyGame(arcade.Window):
         if row == ROW_COUNT-1 and column < COLORS_COUNT:
             selected_color = colors[column]
             first_color = self.grid[ROW_COUNT - 2][0]
-            print("First color: ", first_color)
-            print("Selected color: ", selected_color)
             fill_zone(self, selected_color,first_color)
 
         
@@ -108,14 +106,12 @@ def fill_zone(self, selected_color, first_color):
         Fills the zone around the given cell with the given color.
         """
 
-        print('First color:',first_color)
-        print('Selected color:',selected_color)
-        it_fill_zone(self, ROW_COUNT-2,0, first_color, selected_color)
+        if(first_color!=selected_color):
+            it_fill_zone(self, ROW_COUNT-2,0, first_color, selected_color)
         
 def it_fill_zone(self, row,column, first_color, selected_color):
     win = fill_zone_win(self, self.grid[ROW_COUNT-2][COLUMN_COUNT-1])
     if(win):
-        print('Gane')
         return
     
     if not in_grid(row,column):
@@ -134,7 +130,7 @@ def it_fill_zone(self, row,column, first_color, selected_color):
 def bfs_algorithm(self):
     win = fill_zone_win(self, self.grid[ROW_COUNT-2][COLUMN_COUNT-1])
     count_cost = 0
-    while not win:
+    while win==False:
         first_color = self.grid[ROW_COUNT - 2][0]
         principal_block = [[self.grid[ROW_COUNT-2][0], ROW_COUNT - 2, 0]]
         queue=[[self.grid[ROW_COUNT-2][0], ROW_COUNT - 2, 0]]
@@ -146,16 +142,11 @@ def bfs_algorithm(self):
                 principal_block.append(neighbour)
 
         color_neighbours=[]
-        for block in principal_block:
-            neighbours = get_neighbours(self, block[1], block[2],color_neighbours)
+
+        for blocks in principal_block:
+            neighbours = get_neighbours(self, blocks[1], blocks[2],principal_block)
             for n in neighbours:
                 color_neighbours.append(n)
-
-        # Elimino repetidos de color_neighbours
-        # neighbours = []
-        # for neighbour in color_neighbours:
-        #     if neighbour not in neighbours:
-        #         neighbours.append(neighbour)
         
         # Cuento cuantos hay de cada color
         colors_amount= [[0,0], [1,0], [2,0], [3,0], [4,0], [5,0]]
@@ -182,10 +173,8 @@ def bfs_algorithm(self):
                 color_selected = color[0]
                 color_count = color[1]
         count_cost +=1
-
         fill_zone(self, colors[color_selected], first_color)
-        print('Volvi y pruebo el win')
-        win = fill_zone_win(self, self.grid[ROW_COUNT-2][COLUMN_COUNT-1])
+        win = fill_zone_win(self, self.grid[ROW_COUNT-2][0])
 
     print("El costo fue de: ",count_cost)
 
@@ -196,14 +185,14 @@ def get_color_neighbours(self, x, y, color,principal_block):
     for i in range(4):
         nx = x + dx[i]
         ny = y + dy[i]
-        if in_grid(nx, ny) and self.grid[nx][ny] == color and belong_to(principal_block, self.grid[nx][ny])==False:
-            print('Encontre un vecino con mi color')
-            vecinos.append([self.grid[nx][ny], nx, ny])
+        if((in_grid(nx, ny)==True)):
+            if ((self.grid[nx][ny] == color) and (belong_to(principal_block, self.grid[nx][ny],nx,ny))==False):
+                vecinos.append([self.grid[nx][ny], nx, ny])
     return vecinos
 
-def belong_to(principal_block, color_block):
+def belong_to(principal_block, color_block,nx,ny):
     for block in principal_block:
-        if(block[0] == color_block):
+        if(block[0] == color_block and block[1]==nx and block[2]==ny):
             return True
     return False
 
@@ -216,19 +205,22 @@ def fill_zone_win(self, actual_node):
     return True
 
 # Función para verificar si una posición (x, y) está dentro de la matriz
-def in_grid(x, y,):
-    return x >= 0 and x < ROW_COUNT - 1 and y >= 0 and y < COLUMN_COUNT
+def in_grid(x, y):
+    if (x >= 0 and x < ROW_COUNT - 1 and y >= 0 and y < COLUMN_COUNT):
+        return True
+    return False
 
 # Función para obtener las posiciones adyacentes en la matriz
-def get_neighbours(self, x, y,color_neighbours):
+def get_neighbours(self, x, y,principal_block):
     dx = [-1, 0, 1, 0]  # cambios en x para obtener los vecinos
     dy = [0, 1, 0, -1]  # cambios en y para obtener los vecinos
-    vecinos = []
+    vecinos=[]
     for i in range(4):
         nx = x + dx[i]
         ny = y + dy[i]
-        if in_grid(nx, ny) and belong_to(color_neighbours,self.grid[nx][ny]) == False:
-            vecinos.append([self.grid[nx][ny], nx, ny])
+        if(in_grid(nx, ny)==True):
+            if (belong_to(principal_block,self.grid[nx][ny],nx,ny) == False):
+                vecinos.append([self.grid[nx][ny],nx,ny])
     return vecinos
     
 
