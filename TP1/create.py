@@ -157,21 +157,12 @@ def bfs_algorithm(self):
     border_nodes=0
     while win==False:
         first_color = self.grid[ROW_COUNT - 2][0]
-        principal_block = [[self.grid[ROW_COUNT-2][0], ROW_COUNT - 2, 0]]
-        queue=[[self.grid[ROW_COUNT-2][0], ROW_COUNT - 2, 0]]
-        while queue:
-            block = queue.pop(0)
-            block_neighbours = get_color_neighbours(self, block[1], block[2], block[0],principal_block)
-            for neighbour in block_neighbours:
-                queue.append(neighbour)
-                principal_block.append(neighbour)
+        principal_block = get_principal_block(self)
 
         color_neighbours=[]
 
         for block in principal_block:
-            neighbours = get_neighbours(self, block, principal_block, color_neighbours)
-            for n in neighbours:
-                color_neighbours.append(n)
+            color_neighbours.extend(get_neighbours(self, block, principal_block, color_neighbours))
         
         #Cuento los nodos frontera => todos los vecinos de bloque principal 
         border_nodes+=color_neighbours.__len__()
@@ -237,6 +228,12 @@ def belong_to(principal_block, color_block,nx,ny):
             return True
     return False
 
+def belong_to_array(array, item):
+    for i in array:
+        if(i == item):
+            return True
+    return False
+
 
 def fill_zone_win(self, actual_node):
     for row in range(ROW_COUNT - 1):
@@ -277,14 +274,7 @@ def dfs_algorithm(self):
     visited = [[0 for _ in range(COLUMN_COUNT)] for _ in range(ROW_COUNT-1)]
 
     while finished == False:
-        principal_block = [[self.grid[FIRST_ROW][FIRST_COLUMN],FIRST_ROW, FIRST_COLUMN]] 
-        priority_queue = [[self.grid[FIRST_ROW][FIRST_COLUMN],FIRST_ROW, FIRST_COLUMN]] 
-
-        while priority_queue:
-            block = priority_queue.pop(0)
-            block_neighbours = get_color_neighbours(self, block[1], block[2], block[0],principal_block)
-            priority_queue.extend(block_neighbours)
-            principal_block.extend(block_neighbours)
+        principal_block = get_principal_block(self)
 
         queue = principal_block
         while visit_all(visited)==False and len(queue) > 0:
@@ -335,6 +325,35 @@ def visit_all(visited):
             if visited[row][col] != 1:
                 return False
     return True
+
+def get_principal_block(self):
+    principal_block = [[self.grid[FIRST_ROW][FIRST_COLUMN],FIRST_ROW, FIRST_COLUMN]] 
+    priority_queue = [[self.grid[FIRST_ROW][FIRST_COLUMN],FIRST_ROW, FIRST_COLUMN]] 
+
+    while priority_queue:
+        block = priority_queue.pop(0)
+        block_neighbours = get_color_neighbours(self, block[1], block[2], block[0],principal_block)
+        priority_queue.extend(block_neighbours)
+        principal_block.extend(block_neighbours)    
+    return principal_block
+# Cant de bloques restantes
+def heuristic_1(self):
+    principal_block = get_principal_block(self)
+    
+    return ((ROW_COUNT - 1)*COLUMN_COUNT) - principal_block.__len__()
+
+# Cant de colores restantes
+def heuristic_2(self):
+    principal_block = get_principal_block(self)
+
+    colors = []
+    for row in ROW_COUNT - 1:
+        for col in COLUMN_COUNT:
+            block = [self.grid[row][col],row,col]
+            # Si no esta en el bloque principal y no lo anote ya en el arreglo de colores
+            if(belong_to(principal_block, block[0], block[1], block[2]) == False and belong_to_array(colors, block[0] == False) ):
+                colors.append(block[0])
+    return colors
 
 
 def main():
