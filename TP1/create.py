@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import arcade
 import random
 import matplotlib.pyplot as plt
@@ -33,7 +34,7 @@ colors = {
     2: arcade.color.BLUE,
     3: arcade.color.GREEN,
     4: arcade.color.PINK,
-    5:arcade.color.YELLOW
+    5: arcade.color.YELLOW
 }
 
 class MyGame(arcade.Window):
@@ -73,12 +74,12 @@ class MyGame(arcade.Window):
                         # Draw the box
                         arcade.draw_rectangle_filled(x, y, WIDTH, HEIGHT, color)# Append a cell
             
-            bfs_cost.append(bfs_algorithm(self))
+            # bfs_cost.append(bfs_algorithm(self))
             dfs_cost.append(dfs_algorith(self))
-            print('El tiempo en ejecucion bfs fue de: ', bfs_cost[i][2]) 
-            print('El numero de nodos expandidos de bfs es de: ', bfs_cost[i][1]) 
-            print('El numero de nodos frontera en bfd es de: ', bfs_cost[i][3])
-            print('El costo de bfs es de: ', bfs_cost[i][0])
+            # print('El tiempo en ejecucion bfs fue de: ', bfs_cost[i][2]) 
+            # print('El numero de nodos expandidos de bfs es de: ', bfs_cost[i][1]) 
+            # print('El numero de nodos frontera en bfd es de: ', bfs_cost[i][3])
+            # print('El costo de bfs es de: ', bfs_cost[i][0])
         
         # Promedio en TRIES_AMOUNT tiradas
         time = 0
@@ -242,6 +243,12 @@ def belong_to(principal_block, color_block,nx,ny):
             return True
     return False
 
+def belong_to_dfs(self, principal_block, color_block,nx,ny):
+    for block in principal_block:
+        if(self.grid[block[0]][block[1]] == color_block and block[0]==nx and block[1]==ny):
+            return True
+    return False
+
 
 def fill_zone_win(self, actual_node):
     for row in range(ROW_COUNT - 1):
@@ -279,57 +286,101 @@ def dfs_algorith(self):
     cost = 0
     while finished == False:
         first_color = self.grid[FIRST_ROW][FIRST_COLUMN]
-        visited = [[0 for _ in range(COLUMN_COUNT)] for _ in range(ROW_COUNT)]
-        principal_block = [[self.grid[ROW_COUNT-2][0], ROW_COUNT - 2, 0]]
-        priority_queue = get_neighbours_sorted(self,[[self.grid[ROW_COUNT-2][0], ROW_COUNT - 2, 0]],[[self.grid[ROW_COUNT-2][0], ROW_COUNT - 2, 0]],first_color)
-        while len(priority_queue) > 0:
+        visited = [[0 for _ in range(COLUMN_COUNT)] for _ in range(ROW_COUNT-1)]
+        visited[FIRST_ROW][FIRST_COLUMN] = 1 # declaro el primer bloque como visitado
+        principal_block = [[ROW_COUNT - 2, 0]]
+        print("principal block: " ,principal_block)
+        priority_queue = []
+        priority_queue.extend(get_neighbours_sorted(self,[ROW_COUNT - 2, 0],principal_block))
+        # print("pq:", priority_queue)
+        while visit_all(visited) or len(priority_queue) > 0:
             node = priority_queue.pop(0)
+
+            # si ya visitamos ese nodo continuamos con el sig
+            print("node: ",node)
+            print(pd.DataFrame(visited))
+            if visited[node[0]][node[1]] == 1:
+                continue
+
+            visited[node[0]][node[1]] = 1
+
             # explorar los vecinos de node del mismo color
-            block_neighbours = get_color_neighbours_sorted(self, node[0][1], node[0][2], node[0][0],principal_block)
-            
+            block_neighbours = get_color_neighbours_sorted(self,node[0], node[1], self.grid[node[0]][node[1]], principal_block)
+            print("block neighbours:",block_neighbours)
+
+            # agrego los bloques del mismo color al bloque principal. 
+            principal_block.append(node)
             for neighbour in block_neighbours:
-                priority_queue.insert(0,neighbour)
-                principal_block.insert(0,neighbour)
+                principal_block.append(neighbour)
 
-            color_neighbours=[]
+            # print("new principal: ", principal_block)
 
+            aux_priority = []
             for block in principal_block:
-                neighbours = get_neighbours_sorted(self, block, principal_block, color_neighbours)
-                for i in range(len(neighbours)):
-                    color_neighbours.insert(0,neighbours[-1 - i]) # -1 -i porque queremos que arranqe al final y nos vaya poniendo al principio
-    
+                neighbours = get_neighbours_sorted(self, block, principal_block) #buscamos todos los adyacentes
+                # print(neighbours)
+                if len(neighbours) != 0:
+                    aux_priority.insert(0,neighbours[0])
+            aux_priority += priority_queue
+            # print("\t aux:",aux_priority)
+            priority_queue = get_no_repeated(visited,aux_priority)
+            # priority_queue = get_not_visited(aux_priority)
+                
             # marco como visit el nodo en cuestion y los nodos vecinos del mismo color 
             
-
             cost +=1
-            fill_zone(self, colors[node[0][0]], first_color)
+            fill_zone(self, self.grid[node[0]][node[1]], first_color)
 
-            # gane?
-            finished = fill_zone_win(self, self.grid[ROW_COUNT-2][0])
+        #     # gane?
+        finished = fill_zone_win(self, self.grid[ROW_COUNT-2][0])
+        # print("corte")
 
-        # buscar los vecinos del nodo en cuestion nodo0 (primer caso: 14 0) -> ponerlos en la pq 
-        # vamos al nodo de la izquierda (nodo1)y explotamos. 
-        # buscar los nodos adyacentes del nodo1 que tengan el mismo color y marcar como un bloque de nodos. (nodos que vamos comiendo)
-        # update la pq con los nuevos nodos (los vecinos de nodo1 del mismo color). La prioridad va a ser del de mas a la izquiera. 
-        # volver a empezar siendo el nodo en cuestion el nodo de mayor prioridad. 
+        # # buscar los vecinos del nodo en cuestion nodo0 (primer caso: 14 0) -> ponerlos en la pq 
+        # # vamos al nodo de la izquierda (nodo1)y explotamos. 
+        # # buscar los nodos adyacentes del nodo1 que tengan el mismo color y marcar como un bloque de nodos. (nodos que vamos comiendo)
+        # # update la pq con los nuevos nodos (los vecinos de nodo1 del mismo color). La prioridad va a ser del de mas a la izquiera. 
+        # # volver a empezar siendo el nodo en cuestion el nodo de mayor prioridad. 
 
-        # prioridad: Rigth Down Left Up
+        # # prioridad: Rigth Down Left Up
     end = time.time()
     return [end - init, cost]
 
-def get_neighbours_sorted(self, block, principal_block, color_neighbours):
+# def get_not_visited(priority_queue):
+#     to_return = []
+#     for block in priority_queue:
+#         if type(block) == list and len(block) > 0:
+#             for sub_block in block:
+#                 if sub_block not in to_return:
+#                     to_return.append(sub_block)
+def visit_all(visited):
+    for row in range(len(visited)):
+        for col in range(len(visited[0])):
+            if visited[row][col] != 1:
+                return False
+    return True
+
+
+def get_neighbours_sorted(self, block, principal_block):
     dx = [1, 0, -1, 0]  # cambios en x para obtener los vecinos
     dy = [0, 1, 0, -1]  # cambios en y para obtener los vecinos
     vecinos=[]
     for i in range(4):
-        nx = block[1] + dx[i]
-        ny = block[2] + dy[i]
+        nx = block[0] + dx[i]
+        ny = block[1] + dy[i]
         if(in_grid(nx, ny)==True):
-            if ((belong_to(principal_block,self.grid[nx][ny],nx,ny) == False) and (belong_to(color_neighbours,self.grid[nx][ny],nx,ny) == False)):
-                vecinos.append([self.grid[nx][ny],nx,ny, block])
+            if ((belong_to_dfs(self,principal_block,self.grid[nx][ny],nx,ny) == False)):
+                vecinos.append([nx,ny])
     return vecinos
 
-def get_color_neighbours_sorted(self, x, y, color,principal_block):
+def get_no_repeated(visited,neighbours):
+    to_return = []
+    for nei in neighbours:
+        if nei not in to_return and visited[nei[0]][nei[1]] != 1:
+            to_return.append(nei)
+    print(to_return)
+    return to_return
+
+def get_color_neighbours_sorted(self, x, y, color, principal_block):
     dx = [1, 0, -1, 0]  # cambios en x para obtener los vecinos
     dy = [0, 1, 0, -1]  # cambios en y para obtener los vecinos
     vecinos = []
@@ -337,8 +388,8 @@ def get_color_neighbours_sorted(self, x, y, color,principal_block):
         nx = x + dx[i]
         ny = y + dy[i]
         if((in_grid(nx, ny)==True)):
-            if ((self.grid[nx][ny] == color) and (belong_to(principal_block, self.grid[nx][ny],nx,ny))==False):
-                vecinos.append([self.grid[nx][ny], nx, ny])
+            if ((self.grid[nx][ny] == color) and (belong_to_dfs(self,principal_block,self.grid[nx][ny],nx,ny) == False)):
+                vecinos.append([nx, ny])
     return vecinos
 
 def main():
@@ -349,7 +400,7 @@ def main():
 if __name__ == "__main__":
     main()
 
-
+14,0    
 # 1 2 2 4 5
 # 3 4 5 2 1
 # 4 3 2 4 1
