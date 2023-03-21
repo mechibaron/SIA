@@ -21,7 +21,7 @@ HEIGHT = 30
 # and on the edges of the screen.
 MARGIN = 5
 
-TRIES_AMOUNT = 100
+TRIES_AMOUNT = 1
 
 # Do the math to figure out our screen dimensions
 SCREEN_WIDTH = (WIDTH + MARGIN) * COLUMN_COUNT + MARGIN
@@ -75,11 +75,11 @@ class MyGame(arcade.Window):
                         arcade.draw_rectangle_filled(x, y, WIDTH, HEIGHT, color)# Append a cell
             
             # bfs_cost.append(bfs_algorithm(self))
-            dfs_cost.append(dfs_algorith(self))
-            # print('El tiempo en ejecucion bfs fue de: ', bfs_cost[i][2]) 
-            # print('El numero de nodos expandidos de bfs es de: ', bfs_cost[i][1]) 
-            # print('El numero de nodos frontera en bfd es de: ', bfs_cost[i][3])
-            # print('El costo de bfs es de: ', bfs_cost[i][0])
+            dfs_cost.append(dfs_algorithm(self))
+            print('El tiempo en ejecucion bfs vs dfs fue de: ', bfs_cost[i][2], dfs_cost[i][2]) 
+            print('El numero de nodos expandidos de bfs vs dfs es de: ', bfs_cost[i][1], dfs_cost[i][1]) 
+            print('El numero de nodos frontera en bfs vs dfs es de: ', bfs_cost[i][3],dfs_cost[i][3])
+            print('El costo de bfs vs dfs es de: ', bfs_cost[i][0],dfs_cost[i][0])
         
         # Promedio en TRIES_AMOUNT tiradas
         time = 0
@@ -87,10 +87,10 @@ class MyGame(arcade.Window):
         border_nodes=0
         cost = 0
         for trie in bfs_cost:
-            time+=trie[2]
-            expanded_nodes+=trie[1]
-            border_nodes+=trie[3]
             cost+=trie[0]
+            expanded_nodes+=trie[1]
+            time+=trie[2]
+            border_nodes+=trie[3]
 
         print('El tiempo promedio es de: ', time / TRIES_AMOUNT) 
         print('El numero de nodos expandidos promedio es de: ', expanded_nodes / TRIES_AMOUNT) 
@@ -104,18 +104,6 @@ class MyGame(arcade.Window):
         plt.ylabel('Costo')
         plt.xlabel('Número de intentos')
         plt.show()
-        # a = [1, 3, 5, 7]
-        # b = [11, 2, 4, 19]
-  
-        # # Plot scatter here
-        # plt.bar(a, b)
-        
-        # c = [1, 3, 2, 1]
-        
-        # plt.errorbar(a, b, yerr=c, fmt="o", color="r")
-        
-        # plt.show()
-        
 
     def on_mouse_press(self, x, y, button, modifiers):
         """
@@ -243,12 +231,6 @@ def belong_to(principal_block, color_block,nx,ny):
             return True
     return False
 
-def belong_to_dfs(self, principal_block, color_block,nx,ny):
-    for block in principal_block:
-        if(self.grid[block[0]][block[1]] == color_block and block[0]==nx and block[1]==ny):
-            return True
-    return False
-
 
 def fill_zone_win(self, actual_node):
     for row in range(ROW_COUNT - 1):
@@ -277,81 +259,71 @@ def get_neighbours(self, block,principal_block, color_neighbours):
             if ((belong_to(principal_block,self.grid[nx][ny],nx,ny) == False) and (belong_to(color_neighbours,self.grid[nx][ny],nx,ny) == False)):
                 vecinos.append([self.grid[nx][ny],nx,ny, block])
     return vecinos
-    
+
+
 # Definimos que la metrica de profundidad refiere a dar un paso para abajo y luego para la derecha 
-def dfs_algorith(self):
+def dfs_algorithm(self):
     init = time.time()
     finished = False
     expanded_nodes_count = 0
+    border_nodes = 0
     cost = 0
+    visited = [[0 for _ in range(COLUMN_COUNT)] for _ in range(ROW_COUNT-1)]
+
     while finished == False:
-        first_color = self.grid[FIRST_ROW][FIRST_COLUMN]
-        visited = [[0 for _ in range(COLUMN_COUNT)] for _ in range(ROW_COUNT-1)]
-        visited[FIRST_ROW][FIRST_COLUMN] = 1 # declaro el primer bloque como visitado
-        principal_block = [[ROW_COUNT - 2, 0]]
-        print("principal block: " ,principal_block)
-        priority_queue = []
-        priority_queue.extend(get_neighbours_sorted(self,[ROW_COUNT - 2, 0],principal_block))
-        # print("pq:", priority_queue)
-        while visit_all(visited) or len(priority_queue) > 0:
-            node = priority_queue.pop(0)
+        principal_block = [[self.grid[FIRST_ROW][FIRST_COLUMN],FIRST_ROW, FIRST_COLUMN]] 
+        priority_queue = [[self.grid[FIRST_ROW][FIRST_COLUMN],FIRST_ROW, FIRST_COLUMN]] 
+
+        while priority_queue:
+            block = priority_queue.pop(0)
+            block_neighbours = get_color_neighbours(self, block[1], block[2], block[0],principal_block)
+            priority_queue.extend(block_neighbours)
+            principal_block.extend(block_neighbours)
+
+        queue = principal_block
+        while visit_all(visited)==False and len(queue) > 0:
+            first_color = self.grid[FIRST_ROW][FIRST_COLUMN]
+            node = queue.pop(0)
 
             # si ya visitamos ese nodo continuamos con el sig
-            print("node: ",node)
-            print(pd.DataFrame(visited))
-            if visited[node[0]][node[1]] == 1:
+            if visited[node[1]][node[2]] == 1:
                 continue
 
-            visited[node[0]][node[1]] = 1
+            visited[node[1]][node[2]] = 1
 
-            # explorar los vecinos de node del mismo color
-            block_neighbours = get_color_neighbours_sorted(self,node[0], node[1], self.grid[node[0]][node[1]], principal_block)
-            print("block neighbours:",block_neighbours)
+            # Busco los vecinos del bloque principal (conjunto frontera)
+            diff_color_neighbours = []
+            diff_color_neighbours.extend(get_neighbours(self, node, principal_block, diff_color_neighbours))
 
-            # agrego los bloques del mismo color al bloque principal. 
-            principal_block.append(node)
-            for neighbour in block_neighbours:
-                principal_block.append(neighbour)
+            border_nodes+= diff_color_neighbours.__len__()
 
-            # print("new principal: ", principal_block)
-
-            aux_priority = []
-            for block in principal_block:
-                neighbours = get_neighbours_sorted(self, block, principal_block) #buscamos todos los adyacentes
-                # print(neighbours)
-                if len(neighbours) != 0:
-                    aux_priority.insert(0,neighbours[0])
-            aux_priority += priority_queue
-            # print("\t aux:",aux_priority)
-            priority_queue = get_no_repeated(visited,aux_priority)
-            # priority_queue = get_not_visited(aux_priority)
-                
-            # marco como visit el nodo en cuestion y los nodos vecinos del mismo color 
-            
+            print(diff_color_neighbours)            
             cost +=1
-            fill_zone(self, self.grid[node[0]][node[1]], first_color)
+            # Pintame con el primer color del vecino segun prioridad (Abajo,Derecha,Arriba,Izquierda)
+            if diff_color_neighbours.__len__() > 0:
+                fill_zone(self, diff_color_neighbours[0][0], first_color)
+                
+            expanded_nodes = []    
+            for neighbour in diff_color_neighbours:
+                if ((neighbour[0] == colors[diff_color_neighbours[0][0]]) and (belong_to(expanded_nodes, neighbour[3][0], neighbour[3][1], neighbour[3][2]))== False):
+                    expanded_nodes.append(neighbour[3])
+                    expanded_nodes_count+=1
 
-        #     # gane?
+            # Me fijo quien es ahora el bloque principal una vez que ya pinte
+            priority_queue = [[self.grid[FIRST_ROW][FIRST_COLUMN],FIRST_ROW, FIRST_COLUMN]] #Este arreglo se usa solo para popear
+            while priority_queue:
+                block = priority_queue.pop(0)
+                block_neighbours = get_color_neighbours(self, block[1], block[2], block[0],principal_block)
+                priority_queue.extend(block_neighbours)
+                principal_block.extend(block_neighbours)
+                queue.extend(block_neighbours)
+
         finished = fill_zone_win(self, self.grid[ROW_COUNT-2][0])
-        # print("corte")
 
-        # # buscar los vecinos del nodo en cuestion nodo0 (primer caso: 14 0) -> ponerlos en la pq 
-        # # vamos al nodo de la izquierda (nodo1)y explotamos. 
-        # # buscar los nodos adyacentes del nodo1 que tengan el mismo color y marcar como un bloque de nodos. (nodos que vamos comiendo)
-        # # update la pq con los nuevos nodos (los vecinos de nodo1 del mismo color). La prioridad va a ser del de mas a la izquiera. 
-        # # volver a empezar siendo el nodo en cuestion el nodo de mayor prioridad. 
-
-        # # prioridad: Rigth Down Left Up
     end = time.time()
-    return [end - init, cost]
+    return [cost, expanded_nodes_count, end-init, border_nodes]
 
-# def get_not_visited(priority_queue):
-#     to_return = []
-#     for block in priority_queue:
-#         if type(block) == list and len(block) > 0:
-#             for sub_block in block:
-#                 if sub_block not in to_return:
-#                     to_return.append(sub_block)
+
 def visit_all(visited):
     for row in range(len(visited)):
         for col in range(len(visited[0])):
@@ -360,38 +332,6 @@ def visit_all(visited):
     return True
 
 
-def get_neighbours_sorted(self, block, principal_block):
-    dx = [1, 0, -1, 0]  # cambios en x para obtener los vecinos
-    dy = [0, 1, 0, -1]  # cambios en y para obtener los vecinos
-    vecinos=[]
-    for i in range(4):
-        nx = block[0] + dx[i]
-        ny = block[1] + dy[i]
-        if(in_grid(nx, ny)==True):
-            if ((belong_to_dfs(self,principal_block,self.grid[nx][ny],nx,ny) == False)):
-                vecinos.append([nx,ny])
-    return vecinos
-
-def get_no_repeated(visited,neighbours):
-    to_return = []
-    for nei in neighbours:
-        if nei not in to_return and visited[nei[0]][nei[1]] != 1:
-            to_return.append(nei)
-    print(to_return)
-    return to_return
-
-def get_color_neighbours_sorted(self, x, y, color, principal_block):
-    dx = [1, 0, -1, 0]  # cambios en x para obtener los vecinos
-    dy = [0, 1, 0, -1]  # cambios en y para obtener los vecinos
-    vecinos = []
-    for i in range(4):
-        nx = x + dx[i]
-        ny = y + dy[i]
-        if((in_grid(nx, ny)==True)):
-            if ((self.grid[nx][ny] == color) and (belong_to_dfs(self,principal_block,self.grid[nx][ny],nx,ny) == False)):
-                vecinos.append([nx, ny])
-    return vecinos
-
 def main():
     MyGame(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
     arcade.run()
@@ -399,11 +339,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-14,0    
-# 1 2 2 4 5
-# 3 4 5 2 1
-# 4 3 2 4 1
-# 5 4 3 2 1
-# 3 5 4 1 2
-
