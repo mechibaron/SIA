@@ -69,7 +69,7 @@ class MyGame(arcade.Window):
                             # Draw the box
                             arcade.draw_rectangle_filled(x, y, WIDTH, HEIGHT, color)  # Append a cell
                     else:
-                        color=colors[random.randrange(0,5)]  
+                        color=colors[random.randrange(0,COLORS_COUNT)]  
                         self.grid[row].append(color)
                         x = (MARGIN + WIDTH) * column + MARGIN + WIDTH // 2
                         y = (MARGIN + HEIGHT) * row + MARGIN + HEIGHT // 2
