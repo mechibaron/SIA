@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import arcade
 import random
 import matplotlib.pyplot as plt
@@ -7,7 +8,11 @@ import time
 # Set how many rows and columns we will have
 ROW_COUNT = 21
 COLUMN_COUNT = 20
-COLORS_COUNT = 5
+
+COLORS_COUNT = 4
+
+FIRST_ROW = ROW_COUNT - 2
+FIRST_COLUMN = 0
 
 # This sets the WIDTH and HEIGHT of each grid location
 WIDTH = 30 
@@ -30,9 +35,9 @@ colors = {
     2: arcade.color.BLUE,
     3: arcade.color.GREEN,
     4: arcade.color.PINK,
-    # 5:arcade.color.YELLOW,
-    # 6: arcade.color.PURPLE,
-    # 7: arcade.color.ORANGE
+    5: arcade.color.YELLOW,
+    6: arcade.color.PURPLE,
+    7: arcade.color.ORANGE,
 }
 
 class MyGame(arcade.Window):
@@ -49,6 +54,7 @@ class MyGame(arcade.Window):
         # Set the background color of the window
         self.background_color = arcade.color.BLACK
         bfs_cost= []
+        dfs_cost = []
         for i in range(TRIES_AMOUNT):
             self.grid = []
             for row in range(ROW_COUNT):
@@ -71,23 +77,23 @@ class MyGame(arcade.Window):
                         # Draw the box
                         arcade.draw_rectangle_filled(x, y, WIDTH, HEIGHT, color)# Append a cell
             
-            bfs_cost.append(bfs_algorithm(self))
-            print(i)
-            # print('El tiempo en ejecucion fue de: ', bfs_cost[i][2]) 
-            # print('El numero de nodos expandidos es de: ', bfs_cost[i][1]) 
-            # print('El numero de nodos frontera es de: ', bfs_cost[i][3])
-            # print('El costo es de: ', bfs_cost[i][0])
-        
+            # bfs_cost.append(bfs_algorithm(self))
+            dfs_cost.append(dfs_algorithm(self))
+            # print('El tiempo en ejecucion bfs vs dfs fue de: ', dfs_cost[i][2]) 
+            # print('El numero de nodos expandidos de bfs vs dfs es de: ', dfs_cost[i][1]) 
+            # print('El numero de nodos frontera en bfs vs dfs es de: ', dfs_cost[i][3])
+            # print('El costo de bfs vs dfs es de: ', dfs_cost[i][0])
+        print(dfs_cost)
         # Promedio en TRIES_AMOUNT tiradas
         time = 0
         expanded_nodes=0
         border_nodes=0
         cost = 0
-        for trie in bfs_cost:
-            time+=trie[2]
-            expanded_nodes+=trie[1]
-            border_nodes+=trie[3]
+        for trie in dfs_cost:
             cost+=trie[0]
+            expanded_nodes+=trie[1]
+            time+=trie[2]
+            border_nodes+=trie[3]
 
         print(bfs_cost)
         print('El tiempo promedio es de: ', time / TRIES_AMOUNT) 
@@ -102,18 +108,6 @@ class MyGame(arcade.Window):
         plt.ylabel('Costo')
         plt.xlabel('Número de intentos')
         plt.show()
-        # a = [1, 3, 5, 7]
-        # b = [11, 2, 4, 19]
-  
-        # # Plot scatter here
-        # plt.bar(a, b)
-        
-        # c = [1, 3, 2, 1]
-        
-        # plt.errorbar(a, b, yerr=c, fmt="o", color="r")
-        
-        # plt.show()
-        
 
     def on_mouse_press(self, x, y, button, modifiers):
         """
@@ -165,28 +159,19 @@ def bfs_algorithm(self):
     border_nodes=0
     while win==False:
         first_color = self.grid[ROW_COUNT - 2][0]
-        principal_block = [[self.grid[ROW_COUNT-2][0], ROW_COUNT - 2, 0]]
-        queue=[[self.grid[ROW_COUNT-2][0], ROW_COUNT - 2, 0]]
-        while queue:
-            block = queue.pop(0)
-            block_neighbours = get_color_neighbours(self, block[1], block[2], block[0],principal_block)
-            for neighbour in block_neighbours:
-                queue.append(neighbour)
-                principal_block.append(neighbour)
+        principal_block = get_principal_block(self)
 
         color_neighbours=[]
 
         for block in principal_block:
-            neighbours = get_neighbours(self, block, principal_block, color_neighbours)
-            for n in neighbours:
-                color_neighbours.append(n)
+            color_neighbours.extend(get_neighbours(self, block, principal_block, color_neighbours))
         
         #Cuento los nodos frontera => todos los vecinos de bloque principal 
         border_nodes+=color_neighbours.__len__()
         
         # Cuento cuantos hay de cada color
-        colors_amount= [[0,0], [1,0], [2,0], [3,0], [4,0],]
-        # colors_amount= [[0,0], [1,0], [2,0], [3,0], [4,0], [5,0], [6,0],[7,0]]
+
+        colors_amount= [[0,0], [1,0], [2,0], [3,0], [4,0], [5,0], [6,0], [7,0]]
 
         for neighbour in color_neighbours:
             if (neighbour[0] == colors[0]):
@@ -199,12 +184,13 @@ def bfs_algorithm(self):
                 colors_amount[3][1]+=1
             elif (neighbour[0] == colors[4]):
                 colors_amount[4][1]+=1
-            # elif (neighbour[0] == colors[5]):
-            #     colors_amount[5][1]+=1
-            # elif (neighbour[0] == colors[6]):
-            #     colors_amount[6][1]+=1
-            # elif (neighbour[0] == colors[7]):
-            #     colors_amount[7][1]+=1
+
+            elif (neighbour[0] == colors[5]):
+                colors_amount[5][1]+=1
+            elif (neighbour[0] == colors[6]):
+                colors_amount[6][1]+=1
+            elif (neighbour[0] == colors[7]):
+                colors_amount[7][1]+=1
 
         # Veo cual es el color que mas aparece
         color_selected = 0
@@ -246,6 +232,12 @@ def belong_to(principal_block, color_block,nx,ny):
             return True
     return False
 
+def belong_to_array(array, item):
+    for i in array:
+        if(i == item):
+            return True
+    return False
+
 
 def fill_zone_win(self, actual_node):
     for row in range(ROW_COUNT - 1):
@@ -261,6 +253,8 @@ def in_grid(x, y):
     return False
 
 # Función para obtener las posiciones adyacentes en la matriz
+#devuelve en el primero el color, en el segundo valor en ex, el tercero el valor en y el cuarto el padre.
+#sin repetidos y desordenados
 def get_neighbours(self, block,principal_block, color_neighbours):
     dx = [-1, 0, 1, 0]  # cambios en x para obtener los vecinos
     dy = [0, 1, 0, -1]  # cambios en y para obtener los vecinos
@@ -272,7 +266,99 @@ def get_neighbours(self, block,principal_block, color_neighbours):
             if ((belong_to(principal_block,self.grid[nx][ny],nx,ny) == False) and (belong_to(color_neighbours,self.grid[nx][ny],nx,ny) == False)):
                 vecinos.append([self.grid[nx][ny],nx,ny, block])
     return vecinos
+
+
+# Definimos que la metrica de profundidad refiere a dar un paso para abajo y luego para la derecha 
+def dfs_algorithm(self):
+    init = time.time()
+    finished = False
+    expanded_nodes_count = 0
+    border_nodes = 0
+    cost = 0
+    visited = [[0 for _ in range(COLUMN_COUNT)] for _ in range(ROW_COUNT-1)]
+
+    while finished == False:
+        principal_block = get_principal_block(self)
+
+        queue = principal_block
+        while visit_all(visited)==False and len(queue) > 0:
+            first_color = self.grid[FIRST_ROW][FIRST_COLUMN]
+            node = queue.pop(0)
+
+            # si ya visitamos ese nodo continuamos con el sig
+            if visited[node[1]][node[2]] == 1:
+                continue
+
+            visited[node[1]][node[2]] = 1
+
+            # Busco los vecinos del bloque principal (conjunto frontera)
+            diff_color_neighbours = []
+            diff_color_neighbours.extend(get_neighbours(self, node, principal_block, diff_color_neighbours))
+
+            border_nodes+= diff_color_neighbours.__len__()
+
+            cost +=1
+            # Pintame con el primer color del vecino segun prioridad (Abajo,Derecha,Arriba,Izquierda)
+            if diff_color_neighbours.__len__() > 0:
+                fill_zone(self, diff_color_neighbours[0][0], first_color)
+                
+            expanded_nodes = [] 
+            for neighbour in diff_color_neighbours:
+                if ((neighbour[0] == diff_color_neighbours[0][0]) and (belong_to(expanded_nodes, neighbour[3][0], neighbour[3][1], neighbour[3][2]))== False):
+                    expanded_nodes.append(neighbour[3])
+                    expanded_nodes_count+=1
+
+            # Me fijo quien es ahora el bloque principal una vez que ya pinte
+            priority_queue = [[self.grid[FIRST_ROW][FIRST_COLUMN],FIRST_ROW, FIRST_COLUMN]] #Este arreglo se usa solo para popear
+            while priority_queue:
+                block = priority_queue.pop(0)
+                block_neighbours = get_color_neighbours(self, block[1], block[2], block[0],principal_block)
+                priority_queue.extend(block_neighbours)
+                principal_block.extend(block_neighbours)
+                queue.extend(block_neighbours)
+
+        finished = fill_zone_win(self, self.grid[ROW_COUNT-2][0])
+
+    end = time.time()
+    return [cost, expanded_nodes_count, end-init, border_nodes]
+
+
+def visit_all(visited):
+    for row in range(len(visited)):
+        for col in range(len(visited[0])):
+            if visited[row][col] != 1:
+                return False
+    return True
+
+def get_principal_block(self):
+    principal_block = [[self.grid[FIRST_ROW][FIRST_COLUMN],FIRST_ROW, FIRST_COLUMN]] 
+    priority_queue = [[self.grid[FIRST_ROW][FIRST_COLUMN],FIRST_ROW, FIRST_COLUMN]] 
+
+    while priority_queue:
+        block = priority_queue.pop(0)
+        block_neighbours = get_color_neighbours(self, block[1], block[2], block[0],principal_block)
+        priority_queue.extend(block_neighbours)
+        principal_block.extend(block_neighbours)    
+    return principal_block
+# Cant de bloques restantes
+def heuristic_1(self):
+    principal_block = get_principal_block(self)
     
+    return ((ROW_COUNT - 1)*COLUMN_COUNT) - principal_block.__len__()
+
+# Cant de colores restantes
+def heuristic_2(self):
+    principal_block = get_principal_block(self)
+
+    colors = []
+    for row in ROW_COUNT - 1:
+        for col in COLUMN_COUNT:
+            block = [self.grid[row][col],row,col]
+            # Si no esta en el bloque principal y no lo anote ya en el arreglo de colores
+            if(belong_to(principal_block, block[0], block[1], block[2]) == False and belong_to_array(colors, block[0] == False) ):
+                colors.append(block[0])
+    return colors
+
 
 def main():
     MyGame(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
