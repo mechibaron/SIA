@@ -21,7 +21,7 @@ HEIGHT = 30
 # and on the edges of the screen.
 MARGIN = 5
 
-TRIES_AMOUNT = 1
+TRIES_AMOUNT = 100
 
 # Do the math to figure out our screen dimensions
 SCREEN_WIDTH = (WIDTH + MARGIN) * COLUMN_COUNT + MARGIN
@@ -34,7 +34,8 @@ colors = {
     2: arcade.color.BLUE,
     3: arcade.color.GREEN,
     4: arcade.color.PINK,
-    5: arcade.color.YELLOW
+    5: arcade.color.YELLOW,
+    6: arcade.color.PURPLE,
 }
 
 class MyGame(arcade.Window):
@@ -76,17 +77,17 @@ class MyGame(arcade.Window):
             
             # bfs_cost.append(bfs_algorithm(self))
             dfs_cost.append(dfs_algorithm(self))
-            print('El tiempo en ejecucion bfs vs dfs fue de: ', bfs_cost[i][2], dfs_cost[i][2]) 
-            print('El numero de nodos expandidos de bfs vs dfs es de: ', bfs_cost[i][1], dfs_cost[i][1]) 
-            print('El numero de nodos frontera en bfs vs dfs es de: ', bfs_cost[i][3],dfs_cost[i][3])
-            print('El costo de bfs vs dfs es de: ', bfs_cost[i][0],dfs_cost[i][0])
-        
+            # print('El tiempo en ejecucion bfs vs dfs fue de: ', dfs_cost[i][2]) 
+            # print('El numero de nodos expandidos de bfs vs dfs es de: ', dfs_cost[i][1]) 
+            # print('El numero de nodos frontera en bfs vs dfs es de: ', dfs_cost[i][3])
+            # print('El costo de bfs vs dfs es de: ', dfs_cost[i][0])
+        print(dfs_cost)
         # Promedio en TRIES_AMOUNT tiradas
         time = 0
         expanded_nodes=0
         border_nodes=0
         cost = 0
-        for trie in bfs_cost:
+        for trie in dfs_cost:
             cost+=trie[0]
             expanded_nodes+=trie[1]
             time+=trie[2]
@@ -297,15 +298,14 @@ def dfs_algorithm(self):
 
             border_nodes+= diff_color_neighbours.__len__()
 
-            print(diff_color_neighbours)            
             cost +=1
             # Pintame con el primer color del vecino segun prioridad (Abajo,Derecha,Arriba,Izquierda)
             if diff_color_neighbours.__len__() > 0:
                 fill_zone(self, diff_color_neighbours[0][0], first_color)
                 
-            expanded_nodes = []    
+            expanded_nodes = [] 
             for neighbour in diff_color_neighbours:
-                if ((neighbour[0] == colors[diff_color_neighbours[0][0]]) and (belong_to(expanded_nodes, neighbour[3][0], neighbour[3][1], neighbour[3][2]))== False):
+                if ((neighbour[0] == diff_color_neighbours[0][0]) and (belong_to(expanded_nodes, neighbour[3][0], neighbour[3][1], neighbour[3][2]))== False):
                     expanded_nodes.append(neighbour[3])
                     expanded_nodes_count+=1
 
