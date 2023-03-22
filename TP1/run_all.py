@@ -1,13 +1,12 @@
 import numpy as np
-import node
 import Utils.priorityQueue as priorityQueue
 import Utils.priorityQueueGreedy as priorityQueueGreedy
 import time
-import math
 import Utils.fillzoneUtils as fillzoneUtils
 import Utils.heuristic as heuristics
+import node
 
-TRIES = 2
+TRIES = 50
 
 movement_cost = 1
 
@@ -68,7 +67,7 @@ def dfs_search_fill_zone(actual_node, dimension, border_nodes_dfs=1, total_nodes
                     return next_node, border_nodes, total_nodes
 
 
-def a_search_fill_zone(root, dimension, heuristic, blocks_count):
+def a_search_fill_zone(root, dimension, heuristic):
     queue = priorityQueue.PriorityQueue()
     queue.insert(root)
 
@@ -113,7 +112,7 @@ def a_search_fill_zone(root, dimension, heuristic, blocks_count):
                     queue.insert(new_node)
 
 
-def greedy_fill_zone(root, dimension, heuristic, blocks_count):
+def greedy_fill_zone(root, dimension, heuristic):
     current = root
     total_nodes = 1
     border_nodes = 0
@@ -185,84 +184,86 @@ def run_all():
             total_nodes = [0] * print_len
             total_times = [0] * print_len
 
-
-
-            blocks = 0
-            for i in range(dim-1):
-                for j in range(dim-1):
-                    if i == 0 and j == 0: # estoy en el primer color
-                        blocks += 1 
-                        
-            
-            blocks_count = len(blocks)
             
             iteration = 0
+            print(prints[iteration])
             timer = time.time()
-            goals[iteration], border_nodes[iteration], total_nodes[iteration] = a_search_fill_zone(root, dimension, 1, blocks_count)
+            goals[iteration], border_nodes[iteration], total_nodes[iteration] = a_search_fill_zone(root, dimension, 1)
             total_times[iteration] = time.time() - timer
-            info[iteration][0] += goals[iteration]
+            info[iteration][0] += goals[iteration].cost
             info[iteration][1] += border_nodes[iteration]
             info[iteration][2] += total_nodes[iteration]
             info[iteration][3] += total_times[iteration]
             iteration += 1
 
+            print(prints[iteration])
             timer = time.time()
-            goals[iteration], border_nodes[iteration], total_nodes[iteration] = a_search_fill_zone(root, dimension, 2, blocks_count)
+            goals[iteration], border_nodes[iteration], total_nodes[iteration] = a_search_fill_zone(root, dimension, 2)
             total_times[iteration] = time.time() - timer
-            info[iteration][0] += goals[iteration]
+            info[iteration][0] += goals[iteration].cost
             info[iteration][1] += border_nodes[iteration]
             info[iteration][2] += total_nodes[iteration]
             info[iteration][3] += total_times[iteration]
             iteration += 1
             
+            print(prints[iteration])
             timer = time.time()
-            goals[iteration], border_nodes[iteration], total_nodes[iteration] = a_search_fill_zone(root, dimension, 3, blocks_count)
+            goals[iteration], border_nodes[iteration], total_nodes[iteration] = a_search_fill_zone(root, dimension, 3)
             total_times[iteration] = time.time() - timer
-            info[iteration][0] += goals[iteration]
+            info[iteration][0] += goals[iteration].cost
             info[iteration][1] += border_nodes[iteration]
             info[iteration][2] += total_nodes[iteration]
             info[iteration][3] += total_times[iteration]
             iteration += 1
 
+            print(prints[iteration])
             timer = time.time()
-            goals[iteration], border_nodes[iteration], total_nodes[iteration] = greedy_fill_zone(root, dimension, 1, blocks_count)
+            goals[iteration], border_nodes[iteration], total_nodes[iteration] = greedy_fill_zone(root, dimension, 1)
             total_times[iteration] = time.time() - timer
-            info[iteration][0] += goals[iteration]
+            info[iteration][0] += goals[iteration].cost
             info[iteration][1] += border_nodes[iteration]
             info[iteration][2] += total_nodes[iteration]
             info[iteration][3] += total_times[iteration]
             iteration += 1
 
+            print(prints[iteration])
             timer = time.time()
-            goals[iteration], border_nodes[iteration], total_nodes[iteration] = greedy_fill_zone(root, dimension, 2, blocks_count)
+            goals[iteration], border_nodes[iteration], total_nodes[iteration] = greedy_fill_zone(root, dimension, 2)
             total_times[iteration] = time.time() - timer
-            info[iteration][0] += goals[iteration]
+            info[iteration][0] += goals[iteration].cost
             info[iteration][1] += border_nodes[iteration]
             info[iteration][2] += total_nodes[iteration]
             info[iteration][3] += total_times[iteration]
             iteration += 1
 
+            print(prints[iteration])
             timer = time.time()
-            goals[iteration], border_nodes[iteration], total_nodes[iteration] = greedy_fill_zone(root, dimension, 3, blocks_count)
+            goals[iteration], border_nodes[iteration], total_nodes[iteration] = greedy_fill_zone(root, dimension, 3)
             total_times[iteration] = time.time() - timer
-            info[iteration][0] += goals[iteration]
+            info[iteration][0] += goals[iteration].cost
             info[iteration][1] += border_nodes[iteration]
             info[iteration][2] += total_nodes[iteration]
             info[iteration][3] += total_times[iteration]
             iteration += 1
-
+            
+            print(prints[iteration])
             timer = time.time()
             goals[iteration], border_nodes[iteration], total_nodes[iteration] = dfs_search_fill_zone(root, dimension=dimension)
             total_times[iteration] = time.time() - timer
-            info[iteration][0] += goals[iteration]
+            info[iteration][0] += goals[iteration].cost
             info[iteration][1] += border_nodes[iteration]
             info[iteration][2] += total_nodes[iteration]
             info[iteration][3] += total_times[iteration]
             iteration += 1
 
+            # print(prints[iteration])
             timer = time.time()
             # Comentado dado que tarda mucho
             # goals[iteration], border_nodes[iteration], total_nodes[iteration] = bfs_search_fill_zone(root, dimension=dimension)
+            # info[iteration][0] += goals[iteration].cost
+            # info[iteration][1] += border_nodes[iteration]
+            # info[iteration][2] += total_nodes[iteration]
+            # info[iteration][3] += total_times[iteration]
             total_times[iteration] = time.time() - timer
 
             # for i in range(print_len):
@@ -281,7 +282,7 @@ def run_all():
         print('Average Total Cost: ' + str(goals[i].cost/TRIES))
         print('Average Expanded Nodes: ' + str(total_nodes[i]/TRIES))
         print('Average Border Nodes: ' + str(border_nodes[i]/TRIES))
-        print('Average Time: '+ total_times[i]/TRIES)
+        print('Average Time: '+ str(total_times[i]/TRIES))
         print()
         print()
 
