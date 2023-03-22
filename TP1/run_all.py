@@ -14,7 +14,7 @@ movement_cost = 1
 colors = 6
 # NxN
 # dim = [4, 6, 8]
-dim = [4]
+dim = [8]
 
 
 
@@ -281,13 +281,10 @@ def run_all():
         print(prints[i])
         if (i==0):
             print(a_search_1)
-            continue
         elif (i==1):
             print(a_search_2)
-            continue
         elif (i==2):
             print(a_search_3)
-            continue
         elif (i==3):
             print(greedy_1)
         elif (i==4):
