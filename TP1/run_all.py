@@ -194,7 +194,6 @@ def run_all():
 
             
             iteration = 0
-            print(prints[iteration])
             timer = time.time()
             goals[iteration], border_nodes[iteration], total_nodes[iteration] = a_search_fill_zone(root, dimension, 1)
             total_times[iteration] = time.time() - timer
@@ -205,7 +204,6 @@ def run_all():
             a_search_1.append([info[iteration][0], info[iteration][1], info[iteration][2], info[iteration][3]])
             iteration += 1
 
-            print(prints[iteration])
             timer = time.time()
             goals[iteration], border_nodes[iteration], total_nodes[iteration] = a_search_fill_zone(root, dimension, 2)
             total_times[iteration] = time.time() - timer
@@ -216,7 +214,6 @@ def run_all():
             a_search_2.append([info[iteration][0], info[iteration][1], info[iteration][2], info[iteration][3]])
             iteration += 1
             
-            print(prints[iteration])
             timer = time.time()
             goals[iteration], border_nodes[iteration], total_nodes[iteration] = a_search_fill_zone(root, dimension, 3)
             total_times[iteration] = time.time() - timer
@@ -227,7 +224,6 @@ def run_all():
             a_search_3.append([info[iteration][0], info[iteration][1], info[iteration][2], info[iteration][3]])
             iteration += 1
 
-            print(prints[iteration])
             timer = time.time()
             goals[iteration], border_nodes[iteration], total_nodes[iteration] = greedy_fill_zone(root, dimension, 1)
             total_times[iteration] = time.time() - timer
@@ -238,7 +234,6 @@ def run_all():
             greedy_1.append([info[iteration][0], info[iteration][1], info[iteration][2], info[iteration][3]])
             iteration += 1
 
-            print(prints[iteration])
             timer = time.time()
             goals[iteration], border_nodes[iteration], total_nodes[iteration] = greedy_fill_zone(root, dimension, 2)
             total_times[iteration] = time.time() - timer
@@ -249,7 +244,6 @@ def run_all():
             greedy_2.append([info[iteration][0], info[iteration][1], info[iteration][2], info[iteration][3]])
             iteration += 1
 
-            print(prints[iteration])
             timer = time.time()
             goals[iteration], border_nodes[iteration], total_nodes[iteration] = greedy_fill_zone(root, dimension, 3)
             total_times[iteration] = time.time() - timer
@@ -260,7 +254,6 @@ def run_all():
             greedy_3.append([info[iteration][0], info[iteration][1], info[iteration][2], info[iteration][3]])
             iteration += 1
             
-            print(prints[iteration])
             timer = time.time()
             goals[iteration], border_nodes[iteration], total_nodes[iteration] = dfs_search_fill_zone(root, dimension=dimension)
             total_times[iteration] = time.time() - timer
@@ -271,7 +264,6 @@ def run_all():
             dfs.append([info[iteration][0], info[iteration][1], info[iteration][2], info[iteration][3]])
             iteration += 1
 
-            # print(prints[iteration])
             timer = time.time()
             # Comentado dado que tarda mucho
             # goals[iteration], border_nodes[iteration], total_nodes[iteration] = bfs_search_fill_zone(root, dimension=dimension)
