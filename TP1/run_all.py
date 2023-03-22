@@ -158,6 +158,14 @@ def run_all():
 
     info = [[0 for _ in range(4)] for _ in range(print_len)]
 
+    a_search_1=[]
+    a_search_2=[]
+    a_search_3=[]
+    greedy_1=[]
+    greedy_2=[]
+    greedy_3=[]
+    dfs=[]
+    bfs=[]
     for _ in range(TRIES):
         for dimension in dim:
             random_matrix = np.random.randint(0, colors, (dimension, dimension))
@@ -194,6 +202,7 @@ def run_all():
             info[iteration][1] += border_nodes[iteration]
             info[iteration][2] += total_nodes[iteration]
             info[iteration][3] += total_times[iteration]
+            a_search_1.append([info[iteration][0], info[iteration][1], info[iteration][2], info[iteration][3]])
             iteration += 1
 
             print(prints[iteration])
@@ -204,6 +213,7 @@ def run_all():
             info[iteration][1] += border_nodes[iteration]
             info[iteration][2] += total_nodes[iteration]
             info[iteration][3] += total_times[iteration]
+            a_search_2.append([info[iteration][0], info[iteration][1], info[iteration][2], info[iteration][3]])
             iteration += 1
             
             print(prints[iteration])
@@ -214,6 +224,7 @@ def run_all():
             info[iteration][1] += border_nodes[iteration]
             info[iteration][2] += total_nodes[iteration]
             info[iteration][3] += total_times[iteration]
+            a_search_3.append([info[iteration][0], info[iteration][1], info[iteration][2], info[iteration][3]])
             iteration += 1
 
             print(prints[iteration])
@@ -224,6 +235,7 @@ def run_all():
             info[iteration][1] += border_nodes[iteration]
             info[iteration][2] += total_nodes[iteration]
             info[iteration][3] += total_times[iteration]
+            greedy_1.append([info[iteration][0], info[iteration][1], info[iteration][2], info[iteration][3]])
             iteration += 1
 
             print(prints[iteration])
@@ -234,6 +246,7 @@ def run_all():
             info[iteration][1] += border_nodes[iteration]
             info[iteration][2] += total_nodes[iteration]
             info[iteration][3] += total_times[iteration]
+            greedy_2.append([info[iteration][0], info[iteration][1], info[iteration][2], info[iteration][3]])
             iteration += 1
 
             print(prints[iteration])
@@ -244,6 +257,7 @@ def run_all():
             info[iteration][1] += border_nodes[iteration]
             info[iteration][2] += total_nodes[iteration]
             info[iteration][3] += total_times[iteration]
+            greedy_3.append([info[iteration][0], info[iteration][1], info[iteration][2], info[iteration][3]])
             iteration += 1
             
             print(prints[iteration])
@@ -254,6 +268,7 @@ def run_all():
             info[iteration][1] += border_nodes[iteration]
             info[iteration][2] += total_nodes[iteration]
             info[iteration][3] += total_times[iteration]
+            dfs.append([info[iteration][0], info[iteration][1], info[iteration][2], info[iteration][3]])
             iteration += 1
 
             # print(prints[iteration])
@@ -264,6 +279,7 @@ def run_all():
             # info[iteration][1] += border_nodes[iteration]
             # info[iteration][2] += total_nodes[iteration]
             # info[iteration][3] += total_times[iteration]
+            # bfs.append([info[iteration][0], info[iteration][1], info[iteration][2], info[iteration][3]])
             total_times[iteration] = time.time() - timer
 
             # for i in range(print_len):
@@ -276,8 +292,25 @@ def run_all():
             #     print()
             #     print()
 
-    for i in range(print_len):
+# - 1 para que no me imprima bfs
+    for i in range(print_len-1):
         print(prints[i])
+        if (i==0):
+            print(a_search_1)
+        elif (i==1):
+            print(a_search_2)
+        elif (i==2):
+            print(a_search_3)
+        elif (i==3):
+            print(greedy_1)
+        elif (i==4):
+            print(greedy_2)
+        elif (i==5):
+            print(greedy_3)
+        elif (i==6):
+            print(dfs)
+        else:
+            print(bfs)
 
         print('Average Total Cost: ' + str(goals[i].cost/TRIES))
         print('Average Expanded Nodes: ' + str(total_nodes[i]/TRIES))
@@ -285,6 +318,7 @@ def run_all():
         print('Average Time: '+ str(total_times[i]/TRIES))
         print()
         print()
+    
 
 if __name__ == '__main__':
     run_all()
