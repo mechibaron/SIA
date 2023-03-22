@@ -11,7 +11,7 @@ TRIES = 50
 movement_cost = 1
 
 # M
-colors = 3
+colors = 6
 # NxN
 # dim = [4, 6, 8]
 dim = [4]
@@ -277,7 +277,7 @@ def run_all():
             # bfs.append([goals[iteration].cost, border_nodes[iteration], total_nodes[iteration], total_times[iteration]])
 
 # - 1 para que no me imprima bfs
-    for i in range(3):
+    for i in range(print_len):
         print(prints[i])
         if (i==0):
             print(a_search_1)
@@ -300,9 +300,9 @@ def run_all():
             print(bfs)
 
         print('Average Total Cost: ' + str(info[i][0]/TRIES))
-        print('Average Expanded Nodes: ' + str(info[i][0]/TRIES))
-        print('Average Border Nodes: ' + str(info[i][0]/TRIES))
-        print('Average Time: '+ str(info[i][0]/TRIES))
+        print('Average Expanded Nodes: ' + str(info[i][1]/TRIES))
+        print('Average Border Nodes: ' + str(info[i][2]/TRIES))
+        print('Average Time: '+ str(info[i][3]/TRIES))
         print()
         print()
     
