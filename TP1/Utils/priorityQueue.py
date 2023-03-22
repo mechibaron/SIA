@@ -1,0 +1,44 @@
+# A simple implementation of Priority Queue
+# using Queue.
+class PriorityQueue(object):
+    def __init__(self):
+        self.queue = []
+
+    def __str__(self):
+        return ' '.join([str(i) for i in self.queue])
+
+    # for checking if the queue is empty
+    def isEmpty(self):
+        return len(self.queue) == 0
+
+    # for inserting an element in the queue
+    def insert(self, node):
+        self.queue.append(node)
+
+    # for popping the lowest item
+    def pop(self):
+        try:
+            max_val = 0
+            for i in range(len(self.queue)):
+                if self.queue[i].value + self.queue[i].cost < self.queue[max_val].value + self.queue[max_val].cost:
+                    max_val = i
+                elif self.queue[i].value + self.queue[i].cost == self.queue[max_val].value + self.queue[max_val].cost:
+                    if self.queue[i].value > self.queue[max_val].value:
+                        max_val = i
+            item = self.queue[max_val]
+            del self.queue[max_val]
+            return item
+        except IndexError:
+            print()
+            exit()
+
+
+# if __name__ == '__main__':
+#     myQueue = PriorityQueue()
+#     myQueue.insert(12)
+#     myQueue.insert(1)
+#     myQueue.insert(14)
+#     myQueue.insert(7)
+#     print(myQueue)
+#     while not myQueue.isEmpty():
+#         print(myQueue.pop())
