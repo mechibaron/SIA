@@ -11,9 +11,11 @@ TRIES = 50
 movement_cost = 1
 
 # M
-colors = 6
+colors = 3
 # NxN
-dim = [4, 6, 8]
+# dim = [4, 6, 8]
+dim = [4]
+
 
 
 # armo una cola y voy sacando el nodo que hace más tiempo se encuentra en la cola
@@ -201,7 +203,7 @@ def run_all():
             info[iteration][1] += border_nodes[iteration]
             info[iteration][2] += total_nodes[iteration]
             info[iteration][3] += total_times[iteration]
-            a_search_1.append([info[iteration][0], info[iteration][1], info[iteration][2], info[iteration][3]])
+            a_search_1.append([goals[iteration].cost, border_nodes[iteration], total_nodes[iteration], total_times[iteration]])
             iteration += 1
 
             timer = time.time()
@@ -211,7 +213,7 @@ def run_all():
             info[iteration][1] += border_nodes[iteration]
             info[iteration][2] += total_nodes[iteration]
             info[iteration][3] += total_times[iteration]
-            a_search_2.append([info[iteration][0], info[iteration][1], info[iteration][2], info[iteration][3]])
+            a_search_2.append([goals[iteration].cost, border_nodes[iteration], total_nodes[iteration], total_times[iteration]])
             iteration += 1
             
             timer = time.time()
@@ -221,7 +223,7 @@ def run_all():
             info[iteration][1] += border_nodes[iteration]
             info[iteration][2] += total_nodes[iteration]
             info[iteration][3] += total_times[iteration]
-            a_search_3.append([info[iteration][0], info[iteration][1], info[iteration][2], info[iteration][3]])
+            a_search_3.append([goals[iteration].cost, border_nodes[iteration], total_nodes[iteration], total_times[iteration]])
             iteration += 1
 
             timer = time.time()
@@ -231,7 +233,7 @@ def run_all():
             info[iteration][1] += border_nodes[iteration]
             info[iteration][2] += total_nodes[iteration]
             info[iteration][3] += total_times[iteration]
-            greedy_1.append([info[iteration][0], info[iteration][1], info[iteration][2], info[iteration][3]])
+            greedy_1.append([goals[iteration].cost, border_nodes[iteration], total_nodes[iteration], total_times[iteration]])
             iteration += 1
 
             timer = time.time()
@@ -241,7 +243,7 @@ def run_all():
             info[iteration][1] += border_nodes[iteration]
             info[iteration][2] += total_nodes[iteration]
             info[iteration][3] += total_times[iteration]
-            greedy_2.append([info[iteration][0], info[iteration][1], info[iteration][2], info[iteration][3]])
+            greedy_2.append([goals[iteration].cost, border_nodes[iteration], total_nodes[iteration], total_times[iteration]])
             iteration += 1
 
             timer = time.time()
@@ -251,7 +253,7 @@ def run_all():
             info[iteration][1] += border_nodes[iteration]
             info[iteration][2] += total_nodes[iteration]
             info[iteration][3] += total_times[iteration]
-            greedy_3.append([info[iteration][0], info[iteration][1], info[iteration][2], info[iteration][3]])
+            greedy_3.append([goals[iteration].cost, border_nodes[iteration], total_nodes[iteration], total_times[iteration]])
             iteration += 1
             
             timer = time.time()
@@ -261,38 +263,31 @@ def run_all():
             info[iteration][1] += border_nodes[iteration]
             info[iteration][2] += total_nodes[iteration]
             info[iteration][3] += total_times[iteration]
-            dfs.append([info[iteration][0], info[iteration][1], info[iteration][2], info[iteration][3]])
+            dfs.append([goals[iteration].cost, border_nodes[iteration], total_nodes[iteration], total_times[iteration]])
             iteration += 1
 
-            timer = time.time()
-            # Comentado dado que tarda mucho
+            # timer = time.time()
+            # # Comentado dado que tarda mucho
             # goals[iteration], border_nodes[iteration], total_nodes[iteration] = bfs_search_fill_zone(root, dimension=dimension)
+            # total_times[iteration] = time.time() - timer
             # info[iteration][0] += goals[iteration].cost
             # info[iteration][1] += border_nodes[iteration]
             # info[iteration][2] += total_nodes[iteration]
             # info[iteration][3] += total_times[iteration]
-            # bfs.append([info[iteration][0], info[iteration][1], info[iteration][2], info[iteration][3]])
-            total_times[iteration] = time.time() - timer
-
-            # for i in range(print_len):
-            #     print(prints[i])
-            #     print(total_times[i])
-
-            #     print('Total cost: ' + str(goals[i].cost))
-            #     print('Total nodes: ' + str(total_nodes[i]))
-            #     print('Border nodes: ' + str(border_nodes[i]))
-            #     print()
-            #     print()
+            # bfs.append([goals[iteration].cost, border_nodes[iteration], total_nodes[iteration], total_times[iteration]])
 
 # - 1 para que no me imprima bfs
-    for i in range(print_len-1):
+    for i in range(3):
         print(prints[i])
         if (i==0):
             print(a_search_1)
+            continue
         elif (i==1):
             print(a_search_2)
+            continue
         elif (i==2):
             print(a_search_3)
+            continue
         elif (i==3):
             print(greedy_1)
         elif (i==4):
@@ -304,10 +299,10 @@ def run_all():
         else:
             print(bfs)
 
-        print('Average Total Cost: ' + str(goals[i].cost/TRIES))
-        print('Average Expanded Nodes: ' + str(total_nodes[i]/TRIES))
-        print('Average Border Nodes: ' + str(border_nodes[i]/TRIES))
-        print('Average Time: '+ str(total_times[i]/TRIES))
+        print('Average Total Cost: ' + str(info[i][0]/TRIES))
+        print('Average Expanded Nodes: ' + str(info[i][0]/TRIES))
+        print('Average Border Nodes: ' + str(info[i][0]/TRIES))
+        print('Average Time: '+ str(info[i][0]/TRIES))
         print()
         print()
     
