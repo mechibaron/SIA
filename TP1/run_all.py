@@ -11,7 +11,7 @@ TRIES = 50
 movement_cost = 1
 
 # M
-colors = 6
+colors = 3
 # NxN
 # dim = [4, 6, 8]
 dim = [4]
@@ -48,11 +48,9 @@ def bfs_search_fill_zone(root, dimension):
 
 
 def dfs_search_fill_zone(actual_node, dimension, border_nodes_dfs=1, total_nodes_dfs=1):
-    border_nodes_dfs = border_nodes_dfs - 1
     # nodo Encontrado
     if fillzoneUtils.is_goal(actual_node, dimension):
         return actual_node, border_nodes_dfs, total_nodes_dfs
-
     # siguiente nodo
     for color in range(colors):
         if color != actual_node.color:
@@ -67,6 +65,10 @@ def dfs_search_fill_zone(actual_node, dimension, border_nodes_dfs=1, total_nodes
                                                                   total_nodes_dfs + 1)
                 if next_node is not None:
                     return next_node, border_nodes, total_nodes
+        else:
+            border_nodes_dfs = border_nodes_dfs - 1
+
+
 
 
 def a_search_fill_zone(root, dimension, heuristic):
@@ -307,6 +309,7 @@ def run_all():
         print('Average Expanded Nodes: ' + str(info[i][2]/TRIES))
         print('Average Border Nodes: ' + str(info[i][1]/TRIES))
         print('Average Time: '+ str(info[i][3]/TRIES))
+        print(np.std([it[1] for it in dfs]))
         print()
         print()
     
