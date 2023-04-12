@@ -68,15 +68,14 @@ def select_roulette_ranking(pop,pseudo_fitness_list, k):
 
 def select_ranking(pop, mixes, f, k, goal):
   fitness = np.apply_along_axis(f, 1, mixes, (goal))
-  rank=fitness[::-1]
+  rank=sorted(fitness, reverse=True)
   pseudo_fitness=np.zeros_like(fitness)
   
   for i in range(k):
     pseudo_fitness[i] = (k-rank[i])/k
 
-  # pseudo_fitness_sum = sum(pseudo_fitness)
-  # print(pseudo_fitness)
-
+  # order = np.argsort(pseudo_fitness)
+  # pop = pop[order]
   # Utilizar la ruleta para seleccionar un individuo de la población
   final_roulette = select_roulette_ranking(pop,pseudo_fitness, k)
 

@@ -23,7 +23,7 @@ def get_colors(path) -> np.ndarray:
 
 last_fitness = []
 
-def check_finished(iter, pop, mixes, delta, goal):
+def check_finished(iter_amount, iter, pop, mixes, delta, goal):
 
   aps = np.apply_along_axis(genetic.aptitud, 1, mixes, (goal))
   best_aps = np.max(aps)
@@ -40,13 +40,13 @@ def check_finished(iter, pop, mixes, delta, goal):
 
   print(best_aps)
   
-  print("best mix con aptitud = {}".format(best_aps))
+  print("Best mix con aptitud = {}".format(best_aps))
   print(best)
-  print("props:")
+  print("Props:")
   pop = np.flip(pop[order], axis=0)
   print(pop[0])
 
-  if ( iter >= 1000 or 1 - best_aps < delta):
+  if ( iter >= iter_amount or 1 - best_aps < delta):
     # plt.plot(xpoints, ypoints)
     # plt.plot(xpoints, y_red, 'r-')
     # plt.plot(xpoints, y_green, 'g-')
