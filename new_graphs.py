@@ -123,5 +123,5 @@ df5= {'Costo': costo, 'Cantidad de nodos expandidos': nodo,'Tiempo (s)':tiempo,'
 pd.DataFrame(data=df5, index = None)
 df_dataframe4=pd.DataFrame(data=df5, index = None)
 subset=["Cantidad de nodos expandidos","Nodos Frontera expandidos"]
-sns.barplot(data=df_dataframe4,x="Metodo de busqueda",y=df_dataframe4[subset])
+sns.barplot(data=df_dataframe4,x='Metodo de busqueda',hue=subset)
 plt.show()
