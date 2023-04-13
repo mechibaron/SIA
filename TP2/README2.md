@@ -1,9 +1,7 @@
 # SIA
-Trabajos Prácticos 
+Trabajos Prácticos
 
-# Pintor
-
-### Sistemas de Inteligencia Artificial - Grupo 4
+### Sistemas de Inteligencia Artificial - Grupo 1
 
 ## Instalación 🛠️
 
@@ -20,12 +18,19 @@ pip install math
 1. Elite
 2. Ruleta
 3. Torneo
+4. Boltzmann
 
 ### Métodos de Cruza
 1. Simple
 2. Doble
 3. Uniforme
 
+### Método de Mutacion 
+1. Completa
+
+### Métodos de Corte
+1. 1-Fitness < DELTA
+2. Cantidad de generaciones
 
 ## Ejecución 🚀
 

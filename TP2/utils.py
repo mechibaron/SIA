@@ -23,7 +23,7 @@ def get_colors(path) -> np.ndarray:
 
 last_fitness = []
 
-def check_finished(iter_amount, iter, pop, mixes, delta, goal):
+def check_finished(iter_amount, iter, pop, mixes, delta, goal, cut_method, seleccion_method, cross_method):
 
   aps = np.apply_along_axis(genetic.aptitud, 1, mixes, (goal))
   best_aps = np.max(aps)
@@ -45,28 +45,46 @@ def check_finished(iter_amount, iter, pop, mixes, delta, goal):
   print("Props:")
   pop = np.flip(pop[order], axis=0)
   print(pop[0])
-
-  if ( iter >= iter_amount or 1 - best_aps < delta):
-    # plt.plot(xpoints, ypoints)
-    # plt.plot(xpoints, y_red, 'r-')
-    # plt.plot(xpoints, y_green, 'g-')
-    # plt.plot(xpoints, y_blue, 'b-')
-    # plt.show()
-
-    # plt.scatter(xpoints, y_red, s=None, c='Red', cmap='Reds')
-    # plt.scatter(xpoints, y_green, s=None, c='Green', cmap='Reds')
-    # plt.scatter(xpoints, y_blue, s=None, c='Blue', cmap='Reds')
-    # plt.xlabel("iteraciones")
-    # plt.ylabel("aptitudes")
-    # plt.title("Selección Elite, Cruza Simple")
-    # plt.show()
-    # print(xpoints)
-    # print(ypoints)
-    return True
-
-  return False
+  cut = 0
+  if(cut_method == 1):
+    if(1-best_aps < delta):
+      return plot_function(xpoints, ypoints, seleccion_method, cross_method, cut_method)
+    return False
+  elif(cut_method == 2):
+    if(iter >= iter_amount):
+      return plot_function(xpoints, ypoints, seleccion_method, cross_method, cut_method)
+    return False
+  else:
+    if ( iter >= iter_amount or 1 - best_aps < delta):
+      if(iter >= iter_amount):
+        cut = 2
+      else:
+        cut = 3
+      return plot_function(xpoints, ypoints, seleccion_method, cross_method, cut)
+    return False
 
 
+def plot_function(xpoints,ypoints, seleccion_method, cross_method, cut_method):
+  # plt.plot(xpoints, ypoints)
+  # plt.plot(xpoints, y_red, 'r-')
+  # plt.plot(xpoints, y_green, 'g-')
+  # plt.plot(xpoints, y_blue, 'b-')
+  # plt.show()
+
+  # plt.scatter(xpoints, y_red, s=None, c='Red', cmap='Reds')
+  # plt.scatter(xpoints, y_green, s=None, c='Green', cmap='Reds')
+  # plt.scatter(xpoints, y_blue, s=None, c='Blue', cmap='Reds')
+  # plt.xlabel("iteraciones")
+  # plt.ylabel("aptitudes")
+  # plt.title("Selección Elite, Cruza Simple")
+  # plt.show()
+  # print(xpoints)
+  # print(ypoints)
+  if(cut_method==1):
+    print("A cortado debido a 1-Fitness < DELTA")
+  else:
+    print("A cortado debido a que se recorrio la totalidad de generaciones")
+  return True
 
 def get_mixes(rgbp):
   mixes = []

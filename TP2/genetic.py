@@ -110,9 +110,6 @@ def select_ranking(pop, mixes, f, k, goal):
 
   return final_roulette
 
-
-
-
 def temperatura(i):
   t_c=0.1
   t_0=10
@@ -135,9 +132,9 @@ def select_boltzmann(pop, mixes, f, k, goal, i):
 
   selection = []
   for ri in rs:
-    for i in range(len(qs)):
-      if (qs[i-1] < ri <= qs[i]):
-        selection.append(pop[i])
+    for m in range(len(qs)):
+      if (qs[m-1] < ri <= qs[m]):
+        selection.append(pop[m])
 
   return np.array(selection)
 
@@ -198,7 +195,6 @@ class SelectOption(Enum):
   ELITE = select_elite
   ROULETTE = select_roulette
   TOURNEY = select_tourney
-  RANKING = select_ranking
   BOLTZMANN = select_boltzmann
 
 class CrossOption(Enum):

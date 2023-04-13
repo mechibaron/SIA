@@ -16,22 +16,20 @@ def main():
   print(palette)
   goal = np.array([int(x) for x in input("Objective Color: ").split(',')], dtype=np.uint8)
 
-  selector = genetic.SelectOption.RANKING
-  selection_method = int(input("1-Roulette\n2-Elite\n3-Tourney\n4-Ranking\n5-Boltzmann\nInsert the selection method: "))
+  selector = genetic.SelectOption.BOLTZMANN
+  selection_method = int(input("1)Roulette\n2)Elite\n3)Tourney\n4)Boltzmann\nInsert the selection method: "))
   if(selection_method == 1):
     selector = genetic.SelectOption.ROULETTE
   elif(selection_method == 2):
     selector = genetic.SelectOption.ELITE
   elif(selection_method == 3):
     selector = genetic.SelectOption.TOURNEY
-  elif(selection_method == 5):
-    selector = genetic.SelectOption.BOLTZMANN
 
   cross_method = genetic.CrossOption.UNIFORM  
-  crossover_probability = int(input("1-Simple\n2-Doble\n3-Unforme\nInsert the probability of crossover: "))
-  if(crossover_probability == 1):
+  crossover_method = int(input("1)Simple\n2)Doble\n3)Unforme\nInsert the probability of crossover: "))
+  if(crossover_method == 1):
     cross_method = genetic.CrossOption.SIMPLE
-  elif(crossover_probability == 2):
+  elif(crossover_method == 2):
     cross_method = genetic.CrossOption.DOUBLE
 
   # POBLACION INICIAL
@@ -40,10 +38,20 @@ def main():
   #se genera un array de la forma [[R1,G1,B1],[R2,G2,B2],...] con valores eleatorios uniformes 
   pop = rng.uniform(0., 1., size=(population, len(palette)))
   
-  iter_amount= int(input("Insert iteration amount: "))
+  # CORTE
+  cut_method = int(input("1)1-Fitness<DELTA\n2)Cantidad de generaciones\n3)Ambas\nInsert the cut method:"))
+  delta=0
+  iter_amount=0
+  if(cut_method == 1):
+    # delta = 0.01
+    delta = float(input("Insert DELTA for cut condition: "))
+  elif (cut_method ==2):
+    iter_amount= int(input("Insert iteration amount: "))
+  else:
+    iter_amount= int(input("Insert iteration amount: "))
+    delta = float(input("Insert DELTA for cut condition: "))
+
   end = False
-  # delta = 0.01
-  delta = float(input("Insert DELTA for cut condition (1-fitness < DELTA): "))
   i = 0 
 
   while (not end):
@@ -53,7 +61,7 @@ def main():
     mixes = utils.get_mixes(rgbp)
 
     # check criteria
-    end = utils.check_finished(iter_amount, i, pop, mixes, delta, goal)
+    end = utils.check_finished(iter_amount, i, pop, mixes, delta, goal, cut_method, selection_method, crossover_method)
 
     # SELECTION
     parents = selector(pop, mixes, genetic.aptitud, population, goal,i)
