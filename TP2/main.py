@@ -53,7 +53,6 @@ def main():
 
   end = False
   i = 0 
-
   while (not end):
     print("iteracion: " + str(i))
 
