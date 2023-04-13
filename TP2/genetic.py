@@ -16,14 +16,14 @@ def pseudo_aptitud(k, goal):
 #   return (k-rank)/k
 # SELECCION
 
-def select_elite(pop, mixes, f, k, goal):
+def select_elite(pop, mixes, f, k, goal,i):
   fitness = np.apply_along_axis(f, 1, mixes, (goal))
   order = np.argsort(fitness)
   best = np.flip(pop[order], axis=0)
 
   return best[:k]
 
-def select_roulette(pop, mixes, f, k, goal):
+def select_roulette(pop, mixes, f, k, goal,i):
   fitness = np.apply_along_axis(f, 1, mixes, (goal))
   sum_fitness = np.sum(fitness)
 
@@ -52,7 +52,7 @@ def select_tourney(pop, mixes, f, k, goal, m=2):
 
   return np.array(selection)
 
-def select_roulette_ranking(pop,pseudo_fitness_list, k):
+def select_roulette_ranking(pop,pseudo_fitness_list, k, i):
   sum_pseudo_fitness = np.sum(pseudo_fitness_list)
   ps = pseudo_fitness_list / sum_pseudo_fitness
   qs = np.cumsum(ps)
@@ -66,21 +66,61 @@ def select_roulette_ranking(pop,pseudo_fitness_list, k):
 
   return np.array(selection)
 
-def select_ranking(pop, mixes, f, k, goal):
+def select_ranking(pop, mixes, f, k, goal, i):
   fitness = np.apply_along_axis(f, 1, mixes, (goal))
-  rank=sorted(fitness, reverse=True)
-  pseudo_fitness=np.zeros_like(fitness)
+  rank=np.argsort(fitness)[::-1]
+  #rank=sorted(fitness, reverse=True)
+  #pseudo_fitness=np.zeros_like(fitness)
   
   for i in range(k):
-    pseudo_fitness[i] = (k-rank[i])/k
+    fitness[i] = (k-(rank[i]+1))/k
 
-  # order = np.argsort(pseudo_fitness)
-  # pop = pop[order]
-  # Utilizar la ruleta para seleccionar un individuo de la población
-  final_roulette = select_roulette_ranking(pop,pseudo_fitness, k)
+  sum_fitness = np.sum(fitness)
+  ps = fitness / sum_fitness
+  qs = np.cumsum(ps)
+  rs = rng.uniform(0., 1., size=(k,))
 
-  return final_roulette
+  selection = []
+  for ri in rs:
+    for i in range(len(qs)):
+      if (qs[i-1] < ri <= qs[i]):
+        selection.append(pop[i])
 
+  return np.array(selection)
+
+  # # order = np.argsort(fitness)
+  # # pop = pop[order]
+  # # Utilizar la ruleta para seleccionar un individuo de la población
+  # final_roulette = select_roulette_ranking(pop,fitness, k)
+
+  # return final_roulette
+def temperatura(i):
+  t_c=0.1
+  t_0=10
+  k=2
+  T=t_c+(t_0+t_c)*np.exp(-k*i)
+  return T
+
+def select_boltzmann(pop, mixes, f, k, goal, i):
+  fitness = np.apply_along_axis(f, 1, mixes, (goal))
+  T=temperatura(i)
+  average=np.mean(np.exp(fitness/T))
+  expval=np.zeros_like(fitness)
+  for j in range(len(expval)):
+    expval[j]=(np.exp(fitness[j]/T))/average
+  
+  sum_expval = np.sum(expval)
+  ps = expval / sum_expval
+  qs = np.cumsum(ps)
+  rs = rng.uniform(0., 1., size=(k,))
+
+  selection = []
+  for ri in rs:
+    for i in range(len(qs)):
+      if (qs[i-1] < ri <= qs[i]):
+        selection.append(pop[i])
+
+  return np.array(selection)
 
 # CRUZA
 
@@ -140,6 +180,7 @@ class SelectOption(Enum):
   ROULETTE = select_roulette
   TOURNEY = select_tourney
   RANKING = select_ranking
+  BOLTZMANN = select_boltzmann
 
 class CrossOption(Enum):
   SIMPLE = cross_simple

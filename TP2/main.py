@@ -17,13 +17,15 @@ def main():
   goal = np.array([int(x) for x in input("Objective Color: ").split(',')], dtype=np.uint8)
 
   selector = genetic.SelectOption.RANKING
-  selection_method = int(input("1-Roulette\n2-Elite\n3-Tourney\n4-Ranking\nInsert the selection method: "))
+  selection_method = int(input("1-Roulette\n2-Elite\n3-Tourney\n4-Ranking\n5-Boltzmann\nInsert the selection method: "))
   if(selection_method == 1):
     selector = genetic.SelectOption.ROULETTE
   elif(selection_method == 2):
     selector = genetic.SelectOption.ELITE
   elif(selection_method == 3):
     selector = genetic.SelectOption.TOURNEY
+  elif(selection_method == 5):
+    selector = genetic.SelectOption.BOLTZMANN
 
   cross_method = genetic.CrossOption.UNIFORM  
   crossover_probability = int(input("1-Simple\n2-Doble\n3-Unforme\nInsert the probability of crossover: "))
@@ -54,7 +56,7 @@ def main():
     end = utils.check_finished(iter_amount, i, pop, mixes, delta, goal)
 
     # SELECTION
-    parents = selector(pop, mixes, genetic.aptitud, population, goal)
+    parents = selector(pop, mixes, genetic.aptitud, population, goal,i)
 
     # CROSSOVER
     children = genetic.cross_n(parents, cross_method)
