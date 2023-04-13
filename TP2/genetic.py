@@ -66,34 +66,53 @@ def select_roulette_ranking(pop,pseudo_fitness_list, k, i):
 
   return np.array(selection)
 
-def select_ranking(pop, mixes, f, k, goal, i):
+# def select_ranking(pop, mixes, f, k, goal, i):
+#   fitness = np.apply_along_axis(f, 1, mixes, (goal))
+#   rank=np.argsort(fitness)[::-1]
+#   #rank=sorted(fitness, reverse=True)
+#   #pseudo_fitness=np.zeros_like(fitness)
+  
+#   for i in range(k):
+#     fitness[i] = (k-(rank[i]+1))/k
+
+#   sum_fitness = np.sum(fitness)
+#   ps = fitness / sum_fitness
+#   qs = np.cumsum(ps)
+#   rs = rng.uniform(0., 1., size=(k,))
+
+#   selection = []
+#   for ri in rs:
+#     for i in range(len(qs)):
+#       if (qs[i-1] < ri <= qs[i]):
+#         selection.append(pop[i])
+
+#   return np.array(selection)
+
+#   # # order = np.argsort(fitness)
+#   # # pop = pop[order]
+#   # # Utilizar la ruleta para seleccionar un individuo de la población
+#   # final_roulette = select_roulette_ranking(pop,fitness, k)
+
+#   # return final_roulette
+
+def select_ranking(pop, mixes, f, k, goal):
   fitness = np.apply_along_axis(f, 1, mixes, (goal))
-  rank=np.argsort(fitness)[::-1]
-  #rank=sorted(fitness, reverse=True)
-  #pseudo_fitness=np.zeros_like(fitness)
+  rank=sorted(fitness, reverse=True)
+  pseudo_fitness=np.zeros_like(fitness)
   
   for i in range(k):
-    fitness[i] = (k-(rank[i]+1))/k
+    pseudo_fitness[i] = (k-rank[i])/k
 
-  sum_fitness = np.sum(fitness)
-  ps = fitness / sum_fitness
-  qs = np.cumsum(ps)
-  rs = rng.uniform(0., 1., size=(k,))
+  # order = np.argsort(pseudo_fitness)
+  # pop = pop[order]
+  # Utilizar la ruleta para seleccionar un individuo de la población
+  final_roulette = select_roulette_ranking(pop,pseudo_fitness, k)
 
-  selection = []
-  for ri in rs:
-    for i in range(len(qs)):
-      if (qs[i-1] < ri <= qs[i]):
-        selection.append(pop[i])
+  return final_roulette
 
-  return np.array(selection)
 
-  # # order = np.argsort(fitness)
-  # # pop = pop[order]
-  # # Utilizar la ruleta para seleccionar un individuo de la población
-  # final_roulette = select_roulette_ranking(pop,fitness, k)
 
-  # return final_roulette
+
 def temperatura(i):
   t_c=0.1
   t_0=10
