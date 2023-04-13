@@ -1,4 +1,3 @@
-from select import select
 import numpy as np
 from colors import distance, MAX_DISTANCIA
 from enum import Enum
@@ -12,8 +11,6 @@ def pseudo_aptitud(k, goal):
   return (k-goal)/k
 
 
-# def pseudo_aptitud(rank, k):
-#   return (k-rank)/k
 # SELECCION
 
 def select_elite(pop, mixes, f, k, goal,i):

@@ -5,12 +5,6 @@ import genetic
 import colors
 import matplotlib.pyplot as plt
 
-xpoints = []
-ypoints = []
-y_red = []
-y_green = []
-y_blue = []
-
 def get_colors(path) -> np.ndarray:
   file = open(path)
   csvreader = reader(file)
@@ -63,7 +57,7 @@ def plot_function(order,best_color,best_aps, goal, pop, selection_method, cross_
     print("A cortado debido a 1-Fitness < DELTA")
   else:
     print("A cortado debido a que se recorrio la totalidad de generaciones")
-    
+
   #Show COLORS
   rgb_values_0 = np.array([best_color]) / 255
   rgb_values_1 = np.array([goal]) / 255
