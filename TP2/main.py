@@ -8,7 +8,6 @@ import genetic
 rng = np.random.default_rng()
 
 def main():
-  # palette = utils.get_colors("./colores.csv")
   file_name = input("Insert the name of the file: ")
   palette = utils.get_colors("./" + file_name + ".csv")
   print("Palette:")
@@ -33,7 +32,6 @@ def main():
     cross_method = genetic.CrossOption.DOUBLE
 
   # POBLACION INICIAL
-  # population = 100
   population = int(input("Insert the population size: "))
   #se genera un array de la forma [[R1,G1,B1],[R2,G2,B2],...] con valores eleatorios uniformes 
   pop = rng.uniform(0., 1., size=(population, len(palette)))
@@ -43,7 +41,6 @@ def main():
   delta=0
   iter_amount=0
   if(cut_method == 1):
-    # delta = 0.01
     delta = float(input("Insert DELTA for cut condition: "))
   elif (cut_method ==2):
     iter_amount= int(input("Insert iteration amount: "))
@@ -54,7 +51,7 @@ def main():
   end = False
   i = 0 
   while (not end):
-    print("iteracion: " + str(i))
+    print("Iteracion: " + str(i))
 
     rgbp = utils.get_rgbp(palette, pop)
     mixes = utils.get_mixes(rgbp)
