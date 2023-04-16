@@ -30,11 +30,11 @@ def check_finished(iter_amount, iter, pop, mixes, delta, goal, cut_method, selec
   cut = 0
   if(cut_method == 1):
     if(1-best_aps < delta):
-      return plot_function(order,best, best_aps, goal, pop, seleccion_method, cross_method, cut_method)
+      return plot_function(order,best, best_aps, goal, pop, seleccion_method, cross_method, cut_method, iter)
     return False
   elif(cut_method == 2):
     if(iter >= iter_amount):
-      return plot_function(order, best, best_aps, goal, pop, seleccion_method, cross_method, cut_method)
+      return plot_function(order, best, best_aps, goal, pop, seleccion_method, cross_method, cut_method, iter)
     return False
   else:
     if ( iter >= iter_amount or 1 - best_aps < delta):
@@ -42,18 +42,19 @@ def check_finished(iter_amount, iter, pop, mixes, delta, goal, cut_method, selec
         cut = 2
       else:
         cut = 3
-      return plot_function(order,best, best_aps, goal, pop, seleccion_method, cross_method, cut)
+      return plot_function(order,best, best_aps, goal, pop, seleccion_method, cross_method, cut, iter)
     return False
 
 
-def plot_function(order,best_color,best_aps, goal, pop, selection_method, cross_method, cut_method):
+def plot_function(order,best_color,best_aps, goal, pop, selection_method, cross_method, cut_method, iter):
   #PRINT OUTPUTS
   print("Best mix con aptitud = {}".format(best_aps))
   print(best_color)
   print("Props:")
   pop = np.flip(pop[order], axis=0)
   print(pop[0])
-  if(cut_method==1):
+  text = "Aptitud: " + str(round(best_aps,3)) + "     Generations: " + str(iter)
+  if(cut_method!=2):
     print("A cortado debido a 1-Fitness < DELTA")
   else:
     print("A cortado debido a que se recorrio la totalidad de generaciones")
@@ -88,7 +89,9 @@ def plot_function(order,best_color,best_aps, goal, pop, selection_method, cross_
     cross = "Simple"
   elif(cross_method == 2):
     cross = "Double" 
-  title = "Selección " + selection + ", Cruza " + cross
+  title = "Selection " + selection + ", Cross " + cross
+  title+="\n"
+  title+=str(text)
   fig.suptitle(str(title))
   plt.show()
 
