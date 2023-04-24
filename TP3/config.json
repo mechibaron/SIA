@@ -1,0 +1,9 @@
+{
+    "operation": "AND",
+    "learning_rate": 0.1,
+    "epochs": 100,
+    "bias": 1,
+    "operation_options": [
+        "AND", "XOR"
+    ]
+}
