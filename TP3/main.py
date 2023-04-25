@@ -14,32 +14,29 @@ def main():
   operation, learning_rate, epochs, bias = utils.getDataFromFile(data)
 
   # get data
-  sourceData = initdata.get_data()
-  print(sourceData)
-  expectedData = initdata.get_data_expected(operation)
-
-  # add bias
-  for data in sourceData:
-    data.insert(0,bias)
+  X = initdata.get_data()
+  print(X)
+  Y = initdata.get_data_expected(operation)
+  print(Y)
   
   # initialize random weigths
-  w = np.random.rand(len(sourceData))
-  print(w)
+  w = np.random.rand(len(X[0])+1)
+  w[0]=bias
     
   for i in range(epochs):
     correct_predictions = 0
     # for each:
       # $O = Θ(\sum_{i=1}^n x_i*w_i - u)$
       # w^{nuevo} = w^{anterior} + η(ζ^µ - O^µ)x^µ 
-    for j in range(len(sourceData)):
-      prediction = perceptron.predict(sourceData[j],w)
-      error = expectedData[j] - prediction
-      w = perceptron.update_weigths(w,learning_rate,sourceData[j], error)
-      correct_predictions += int(prediction == expectedData[j])
-    
+    for j in range(len(X)):
+      prediction = perceptron.predict(X[j],w)
+      error = Y[j] - prediction
+      w = perceptron.update_weigths(w,learning_rate,X[j], error)
+      correct_predictions += int(prediction)
+    print("pred correctas",correct_predictions)
     # calculate neuron error, if it converged done else go back to for
 
-    accuracy = correct_predictions / len(expectedData)
+    accuracy = correct_predictions / (len(Y))
     print(f"Epoch {i+1}: Accuracy = {accuracy:.2f}")
     if accuracy >= 0.9:
         print("Stopping training. Desired accuracy reached.")
