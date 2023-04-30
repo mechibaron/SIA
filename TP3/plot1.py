@@ -17,17 +17,16 @@ def plot(w, operation, data, result, epoch):
         ax.plot(x_coords[i], y_coords[i], 'o', color=colors[i]) # Pintar los puntos según su correspondencia
     x_vals = w[1]
     y_vals = w[2]
-    a=x_vals
-    b=y_vals
-    m = -a/b
-    m_o = -1/m
-    c=w[0]
+    m = -x_vals/y_vals
     x = range(-10,10)
-    y = [(m/b)*xi - (m/b)*(-c/b) for xi in x]
-    y_o = [(m_o/b)*xi - (m_o/b)*(-c/b) for xi in x]
+    y= [m*xi - w[0] for xi in x]
+    # y = [(m/b)*xi - (m/b)*(-c/b) for xi in x]
+    # y_o = [(m_o/b)*xi - (m_o/b)*(-c/b) for xi in x]
+    plt.ylim(-1.5,1.5)
+    plt.xlim(-1.5,1.5)
     plt.plot(x,y)
-    plt.plot(x,y_o)
-    #w[1]*x + w[2]*y - w[0]
+    # plt.plot(x,y_o)
+    #w[1]*x1 + w[2]*x2 - w[0]
     #ax.plot(x_vals, y_vals, '-', color='green', label='Weight') # '--' indica que se plotee la línea como una línea punteada
     # Agregar títulos y etiquetas a los ejes
     ax.set_xlabel('Coordenada X')
