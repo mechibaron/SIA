@@ -5,5 +5,7 @@
     "bias": 1,
     "operation_options": [
         "AND", "XOR"
-    ]
+    ],
+    "beta": 0.1, 
+    "type_perceptron": "lineal"
 }
