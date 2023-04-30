@@ -22,7 +22,7 @@ def main():
   
   # initialize random weigths
   w = np.random.rand(len(X[0])+1)
-  w[0]=np.random.randint(-10,10)
+  # w[0]=np.random.randint(-10,10)
   print(w[0])
   for i in range(epochs):
     correct_predictions = 0
@@ -39,10 +39,11 @@ def main():
 
     accuracy = correct_predictions / (len(Z))
     print(f"Epoch {i+1}: Accuracy = {accuracy:.2f}")
-    # plot1.plot(w, operation, X, Z, i)
     if accuracy >= 0.9:
-        print("Stopping training. Desired accuracy reached.")
-        break
+      print("Stopping training. Desired accuracy reached.")
+      break
+  plot1.plot(w, operation, X, Z, i+1)
+
 
   return None
 
