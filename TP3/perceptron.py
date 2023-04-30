@@ -13,9 +13,9 @@ def predict(data, w):
     value = np.dot(data, w[1:]) - w[0]
     return step_function(value)
 
-def update_weigths(w,learning_rate,sourceData,error):
+def update_weigths(w,learning_rate,sourceData,error, bias):
     w[1:] += [learning_rate * error * float(i) for i in sourceData]
-    w[0] += learning_rate * error 
+    w[0] += learning_rate * error * bias
     return w
 
 def converged(expectedData, output):
