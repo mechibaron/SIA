@@ -5,12 +5,6 @@ def step_function(x):
         return -1
     else:  
         return 1
-
-def step_function_linear(x):
-    if x < 0:
-        return 0
-    else:  
-        return 1
     
 def tanh(x, beta):
     return np.tanh(beta * x)
@@ -32,11 +26,20 @@ def scaled_lineal(O, min_out, max_out):
 
 def predict_linear(data, w):
     return np.dot(data, w[1:]) - w[0]
+    # return np.dot(data, w[1:])
 
 def predict(data, w):
     value = np.dot(data, w[1:]) - w[0]
     print("Predict value: ", value)
     return step_function(value)
+
+def update_weigths_linear(w,learning_rate,X,error, bias):
+    for j in range(len(X)):    
+        for i in range(1,len(w)):
+            w[i] = w[i] + learning_rate * np.sum(error[j] * X[j][i-1])
+
+    w[0] += learning_rate * error[0] * bias
+    return w
 
 def update_weigths(w,learning_rate,sourceData,error, bias):
     for i in range(1,len(w)):
@@ -45,6 +48,13 @@ def update_weigths(w,learning_rate,sourceData,error, bias):
     w[0] += learning_rate * error * bias
     return w
 
-def converged(expectedData, output):
-    return False
+def update_weigths_no_linear(w, learning_rate, error,X, bias, type, beta):
+    for j in range(len(X)):    
+        for i in range(1,len(w)):
+            if(type=="tanh"):
+                w[i] = w[i] + learning_rate * np.sum(error[j] * X[j][i-1]*d_tanh(X[j], beta))
+            else:
+                w[i] = w[i] + learning_rate * np.sum(error[j] * X[j][i-1]*d_sigmoid(X[j], beta))
 
+    w[0] += learning_rate * error[0] * bias
+    return w
