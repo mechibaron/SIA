@@ -57,7 +57,7 @@ def main2_lineal(learning_rate, epochs, bias):
       O = perceptron.predict_linear(X[j],w)
       # print("O: ",O)
       # scaled_O=perceptron.scaled_lineal(O, min_out, max_out)
-      error.append(Z[j] - O)
+      error.append((1/2)(Z[j] - O)**2)
       mse += perceptron.mean_square_error(Z[j], O)
     
     w = perceptron.update_weigths_linear(w,learning_rate,X, error, bias)
@@ -81,27 +81,33 @@ def main2_no_lineal(learning_rate, epochs, bias, beta, theta):
     for row in reader:
       X.append([row['x1'], row['x2'], row['x3']])
       Z.append(row['y'])
+  if(theta=="tanh"):
+    interval = (-1,1)
+  else:
+    interval = (0,1)
   X = np.array(X, dtype=float)
   Z = np.array(Z, dtype=float)
   w = np.random.rand(len(X[0])+1)
-
+  Z_norm= perceptron.escale_all(Z,interval)
+  print(Z)
   for i in range(epochs):
     mse=0
-    error = []
     for j in range(len(X)):
+      X_p = np.dot(X[j] , w[1:])
       if(theta=="tanh"):
-        O = perceptron.tanh(X[j],beta)
+        O = perceptron.tanh(X_p,beta)
       else:
-        O = perceptron.sigmoid(X[j],beta)
-      error.append(Z[j] - O)
-      mse += perceptron.mean_square_error(Z[j], O)
-
-    w = perceptron.update_weigths_no_linear(w,learning_rate, error, X , bias, theta, beta)
+        O = perceptron.sigmoid(X_p,beta)
+      error=((1/2)*(Z_norm[j] - O)**2)
+      # mse += perceptron.mean_square_error(Z[j], O)
+      mse += perceptron.mean_square_error(Z[j], perceptron.denormalize(Z, O))
+      print(j,"Expected: ", Z[j], "Obtained: ", perceptron.denormalize(Z,O))
+      w = perceptron.update_weigths_no_linear(w,learning_rate, error, X[j] , bias, theta, beta, O)
     mse = mse / (j+1)
     converged = np.sqrt(mse)
     print(f"Epoch {i+1}: Converged = {converged} , MSE = {mse}")
 
-    if(-10 < converged < 10 ):
+    if( -10 < converged < 10 ):
       print("Stopping training. Converged.")
       break     
 
