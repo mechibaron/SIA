@@ -19,7 +19,7 @@ def plot(w, operation, data, result, epoch):
     y_vals = w[2]
     m = -x_vals/y_vals
     x = range(-10,10)
-    y= [m*xi - (-w[0]/y_vals) for xi in x]
+    y= [m*xi - (w[0]/y_vals) for xi in x]
     # y = [(m/b)*xi - (m/b)*(-c/b) for xi in x]
     # y_o = [(m_o/b)*xi - (m_o/b)*(-c/b) for xi in x]
     plt.ylim(-1.5,1.5)
