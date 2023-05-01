@@ -1,5 +1,6 @@
 import numpy as np
 import csv
+from sklearn.model_selection import train_test_split
 
 
 
@@ -82,15 +83,23 @@ class NonlinearPerceptron:
             mse = np.sqrt(self.mean_square_error(Z, outputs_descaled))
             print(f"Epoch {epoch+1}: MSE = {mse}")
             if(self.theta == 'tanh'):
-                if mse < 18.5: #Vimos con muchas pruebas que aprende hasta 18.3 aprox
+                if mse < 3: #Vimos con muchas pruebas que aprende hasta 2.8 aprox con un 70% del csv
                     print("Stopping training. Converged.")
                     break
             else:    
                 if mse < 11: #Vimos con muchas pruebas que aprende hasta 10.28 aprox
                     print("Stopping training. Converged.")
                     break
-                
-                
+    
+    def test(self, X_test, Z_test):
+        correct = 0
+        for inputs, expected_output in zip(X_test, Z_test):
+            output = self.predict(inputs)
+            if np.abs(output - expected_output) < 10:
+                correct += 1
+        accuracy = correct / len(X_test)
+        print(f"Test accuracy: {accuracy}")      
+
     def mean_square_error(self, Z, output):
         mse = 0
         for i in range(len(Z)):
@@ -109,8 +118,11 @@ def main(learning_rate, epochs, bias, beta, theta):
             Z.append(float(row['y']))
     X = np.array(X)
     Z = np.array(Z)
+    X_train, X_test, Z_train, Z_test = train_test_split(X, Z, test_size=0.3, random_state=42)
+
     perc = NonlinearPerceptron(learning_rate, epochs, len(X[0]), theta, beta, bias)
-    perc.train_online(X, Z)
+    perc.train_online(X_train, Z_train)
+    perc.test(X_test, Z_test)
 
 if __name__ == '__main__':
     main()
