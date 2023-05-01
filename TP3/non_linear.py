@@ -2,7 +2,7 @@ import numpy as np
 import csv
 from sklearn.model_selection import train_test_split
 
-
+#eta de 0.1
 
 class NonlinearPerceptron:
     def __init__(self, learning_rate, epochs, input_size, theta='tanh', beta=1, bias=1):
@@ -92,13 +92,11 @@ class NonlinearPerceptron:
                     break
     
     def test(self, X_test, Z_test):
-        correct = 0
-        for inputs, expected_output in zip(X_test, Z_test):
-            output = self.predict(inputs)
-            if np.abs(output - expected_output) < 10:
-                correct += 1
-        accuracy = correct / len(X_test)
-        print(f"Test accuracy: {accuracy}")      
+        outputs = []
+        for inputs in zip(X_test):
+            outputs.append(self.predict(inputs))
+        mse = np.sqrt(self.mean_square_error(Z_test, outputs))
+        print(f"Mean Square Error: {mse}")      
 
     def mean_square_error(self, Z, output):
         mse = 0
@@ -118,7 +116,7 @@ def main(learning_rate, epochs, bias, beta, theta):
             Z.append(float(row['y']))
     X = np.array(X)
     Z = np.array(Z)
-    X_train, X_test, Z_train, Z_test = train_test_split(X, Z, test_size=0.3, random_state=42)
+    X_train, X_test, Z_train, Z_test = train_test_split(X, Z, test_size=0.2, random_state=42)
 
     perc = NonlinearPerceptron(learning_rate, epochs, len(X[0]), theta, beta, bias)
     perc.train_online(X_train, Z_train)

@@ -1,6 +1,8 @@
 import numpy as np
 import csv
-
+#eta = 0.01 como mejor nos da
+#eta = 0.1 muy malo 
+#eta = 0.0001 mejor que 0.1 pero peor que 0.01
 
 class LinearPerceptron:
     def __init__(self, learning_rate, input_size, epochs, bias=1):
@@ -31,7 +33,7 @@ class LinearPerceptron:
             
             print(f"Epoch {i+1}: Converged = {mse} ")
 
-            if(mse < 10 ):
+            if(mse < 10 ): #Probando con tiradas vimos que aprende aprox hasta 9.5
                 print("Stopping training. Converged.")
                 break    
         return None       
