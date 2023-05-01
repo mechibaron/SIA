@@ -7,6 +7,6 @@
         "AND", "XOR"
     ],
     "beta": 0.8, 
-    "type_perceptron": "escalon",
+    "type_perceptron": "lineal",
     "theta": "tanh"
 }

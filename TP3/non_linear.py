@@ -1,16 +1,14 @@
-import json
 import numpy as np
 import csv
-import perceptron
-from sklearn.preprocessing import MinMaxScaler
 
 
 
 class NonlinearPerceptron:
-    def __init__(self, learning_rate, input_size, theta='tanh', beta=1, bias=1):
+    def __init__(self, learning_rate, epochs, input_size, theta='tanh', beta=1, bias=1):
         self.input_size = input_size
         self.bias = bias
         self.learning_rate = learning_rate
+        self.epochs=epochs
         self.theta = theta
         self.beta = beta
         self.weights = np.random.rand(input_size+1)
@@ -46,15 +44,6 @@ class NonlinearPerceptron:
         else:
             self.weights[1:] += self.learning_rate * error *self.d_sigmoid(x)* inputs
             self.weights[0] += self.learning_rate * error*self.d_sigmoid(x)
-
-        # for i in range(1,len(self.weights)):
-        #     x = np.dot(inputs, self.weights[i])
-        #     if self.theta == 'tanh':
-        #         self.weights[i] += self.learning_rate * error *self.d_tanh(x)* inputs[i-1]
-        #     else:
-        #         self.weights[i] += self.learning_rate * error *self.d_sigmoid(x)* inputs[i-1]
-            
-        # self.weights[0] += self.learning_rate * error
     
     def scaler(self, X, X_min, X_max):
         return ((X - X_min)/(X_max - X_min)*(self.b-self.a))+self.a
@@ -62,7 +51,7 @@ class NonlinearPerceptron:
     def descaler(self, X_scaled, X_min, X_max):
         return ((X_scaled - self.a)/(self.b - self.a)*(X_max - X_min)) + X_min
     
-    def train_online(self, X, Z, epochs):
+    def train_online(self, X, Z):
         Z_min,Z_max = np.min(Z), np.max(Z)
         X1 = [arreglo[0] for arreglo in X]
         X2 = [arreglo[1] for arreglo in X]
@@ -77,7 +66,7 @@ class NonlinearPerceptron:
         X_scaled = [[a, b, c] for a, b, c in zip(X1_scaled, X2_scaled, X3_scaled)]
         X_scaled = np.array(X_scaled)
         Z_scaled = np.array(Z_scaled)
-        for epoch in range(epochs):
+        for epoch in range(self.epochs):
             outputs = []
             outputs_descaled = []
             for j in range(len(Z_scaled)):
@@ -115,8 +104,8 @@ def main(learning_rate, epochs, bias, beta, theta):
             Z.append(float(row['y']))
     X = np.array(X)
     Z = np.array(Z)
-    perc = NonlinearPerceptron(learning_rate, len(X[0]), theta, beta, bias)
-    perc.train_online(X, Z, epochs)
+    perc = NonlinearPerceptron(learning_rate, epochs, len(X[0]), theta, beta, bias)
+    perc.train_online(X, Z)
 
 if __name__ == '__main__':
     main()
