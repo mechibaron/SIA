@@ -81,9 +81,14 @@ class NonlinearPerceptron:
             outputs_descaled = np.array(outputs_descaled)
             mse = np.sqrt(self.mean_square_error(Z, outputs_descaled))
             print(f"Epoch {epoch+1}: MSE = {mse}")
-            if mse < 11: #Vimos con muchas pruebas que aprende hasta 10.28 aprox
-                print("Stopping training. Converged.")
-                break
+            if(self.theta == 'tanh'):
+                if mse < 18.5: #Vimos con muchas pruebas que aprende hasta 18.3 aprox
+                    print("Stopping training. Converged.")
+                    break
+            else:    
+                if mse < 11: #Vimos con muchas pruebas que aprende hasta 10.28 aprox
+                    print("Stopping training. Converged.")
+                    break
                 
                 
     def mean_square_error(self, Z, output):
