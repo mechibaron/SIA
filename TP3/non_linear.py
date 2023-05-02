@@ -5,14 +5,17 @@ from sklearn.model_selection import train_test_split
 #eta de 0.1
 
 class NonlinearPerceptron:
-    def __init__(self, learning_rate, epochs, input_size, theta='tanh', beta=1, bias=1):
+    def __init__(self, learning_rate, epochs, input_size, theta='tanh', beta=1, bias=1,w=None):
         self.input_size = input_size
         self.bias = bias
         self.learning_rate = learning_rate
         self.epochs=epochs
         self.theta = theta
         self.beta = beta
-        self.weights = np.random.rand(input_size+1)
+        if(w is None):
+            self.weights = np.random.rand(input_size+1)
+        else:
+            self.weights = w
         if(theta == 'tanh'):
             self.a = -1
         else:
@@ -67,6 +70,7 @@ class NonlinearPerceptron:
         X_scaled = [[a, b, c] for a, b, c in zip(X1_scaled, X2_scaled, X3_scaled)]
         X_scaled = np.array(X_scaled)
         Z_scaled = np.array(Z_scaled)
+        error_by_epochs = []
         for epoch in range(self.epochs):
             outputs = []
             outputs_descaled = []
@@ -81,6 +85,7 @@ class NonlinearPerceptron:
                 # print("esperado: ", Z[j], " obtenido: ", output_descaled)
             outputs_descaled = np.array(outputs_descaled)
             mse = np.sqrt(self.mean_square_error(Z, outputs_descaled))
+            error_by_epochs.append(mse)
             print(f"Epoch {epoch+1}: MSE = {mse}")
             if(self.theta == 'tanh'):
                 if mse < 3: #Vimos con muchas pruebas que aprende hasta 2.8 aprox con un 70% del csv
@@ -90,13 +95,15 @@ class NonlinearPerceptron:
                 if mse < 11: #Vimos con muchas pruebas que aprende hasta 10.28 aprox
                     print("Stopping training. Converged.")
                     break
+        return error_by_epochs
     
     def test(self, X_test, Z_test):
         outputs = []
         for inputs in zip(X_test):
             outputs.append(self.predict(inputs))
         mse = np.sqrt(self.mean_square_error(Z_test, outputs))
-        print(f"Mean Square Error: {mse}")      
+        print(f"Mean Square Error: {mse}")  
+        return mse    
 
     def mean_square_error(self, Z, output):
         mse = 0
