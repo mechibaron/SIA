@@ -1,13 +1,12 @@
 {
     "operation": "XOR",
     "learning_rate": 0.1,
-    "epochs": 100,
+    "epochs": 1000,
     "bias": 1,
     "operation_options": [
         "AND", "XOR"
     ],
     "beta": 0.8, 
-    "type_perceptron": "multicapa",
-    "theta": "tanh",
-    "item":"a"
+    "type_perceptron": "multicapa", 
+    "theta":"tanh"
 }
