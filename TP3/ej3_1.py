@@ -5,7 +5,7 @@ from  metrics import cross_validation
 from constants import FIRST, MIDDLE, LAST
 
 
-def ej1(learning_rate, epochs, layers, batch_size, momentum=False, adaptive_params=None):
+def ej1(learning_rate, epochs, layers, batch_size, momentum=True, adaptive_params=None):
     inputs = ej3_utils.import_data('data/ej3_1_training_set',1)
     outputs = ej3_utils.normalize(np.array(ej3_utils.import_data('data/ej3_1_expected_output',1), dtype=float))
 

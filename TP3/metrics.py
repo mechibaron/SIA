@@ -36,7 +36,7 @@ def f1_score(confusion_matrix, matrix_dim, element_position):
     return 2 * precision_value * recall_value / (precision_value + recall_value)
 
 
-def cross_validation(k, training_set, expected_output, perceptron_type, amount, learning_rate, batch_size=1,
+def cross_validation(k, training_set, expected_output, amount, learning_rate, batch_size=1,
                      learning_rate_params=None, momentum=False):
 
     if not (len(training_set) % k == 0):
@@ -59,11 +59,6 @@ def cross_validation(k, training_set, expected_output, perceptron_type, amount, 
         test_set = [training_set[i] for i in indexes]
         test_output = [expected_output[i] for i in indexes]
 
-        # if perceptron_type == LINEAR:
-        #     perceptron = LinearPerceptron(sub_training_set, sub_expected_output, learning_rate)
-        # elif perceptron_type == NON_LINEAR:
-        #     perceptron = NonLinearPerceptron(sub_training_set, sub_expected_output, learning_rate)
-        # else:
         perceptron = MultilayerPerceptron(sub_training_set, sub_expected_output, learning_rate, batch_size,
                                               learning_rate_params, momentum)
 

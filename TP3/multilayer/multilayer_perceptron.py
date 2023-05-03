@@ -11,7 +11,7 @@ class MultilayerPerceptron:
     prev_layer_neurons = 0
 
     def __init__(self, training_set, expected_output, learning_rate, learning_rate_params=None,
-                 batch_size=1, momentum=False):
+                 batch_size=1, momentum=True):
         # Training set example: [[1, 1], [-1, 1], [1, -1]]
         self.training_set = training_set
         # Expected output example: [[0, 0], [0, 1], [1, 0]]
@@ -67,11 +67,12 @@ class MultilayerPerceptron:
                 # return
             acc_epochs.append(self.test_input(self.training_set))
 
-        print("ACCURACY: \n", acc_epochs)
+        # print("ACCURACY: \n", acc_epochs)
 
-    
+        print("Errores: ", errors_among_epochs)
         plt.plot(list(range(0,epochs)), errors_among_epochs)
-        plt.title("Error vs Epochs, Learning rate 0.1")
+        plt.title("Error vs Epochs, Learning rate 0.01")
+        # plt.xlim(0, 200)
         plt.xlabel("Epochs")
         plt.ylabel("Error")
         plt.show()
