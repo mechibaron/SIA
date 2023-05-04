@@ -3,7 +3,7 @@ import ej3_utils
 
 
 def ej2(learning_rate, epochs, layers, batch_size, momentum=False, adaptive_params=None):
-    inputs = ej3_utils.import_data('data/ej3_23_training_set', 6)
+    inputs = ej3_utils.import_data('data/ej3_23_training_set', 7)
     outputs = np.array(ej3_utils.import_data('data/ej3_2_expected_output', 1), dtype=float)
 
     training_set = np.array(inputs)
