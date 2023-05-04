@@ -69,7 +69,7 @@ class MultilayerPerceptron:
 
         # print("ACCURACY: \n", acc_epochs)
 
-        print("Errores: ", errors_among_epochs)
+        # print("Errores: ", errors_among_epochs)
         plt.plot(list(range(0,epochs)), errors_among_epochs)
         plt.title("Error vs Epochs, Learning rate 0.01")
         # plt.xlim(0, 200)

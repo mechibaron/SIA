@@ -15,12 +15,20 @@ if __name__ == '__main__':
     f.close()
   # define learning rate and epochs
   # learning rate = eta (n)
-  operation, learning_rate, epochs, bias, beta, type_perceptron, theta = utils.getDataFromFile(data)
+  learning_rate, epochs, bias, type_perceptron = utils.getDataFromFile(data)
   if(type_perceptron == 'escalon'):
+    with open('./json/ej1_config.json', 'r') as f:
+      ej1 = json.load(f)
+      f.close()
+    operation = utils.getDataForEj1(ej1)
     step.main(operation, learning_rate, epochs, bias)
   elif (type_perceptron == 'lineal'):
     linear.main(learning_rate, epochs, bias)
   elif (type_perceptron == 'no_lineal'):
+    with open('./json/ej2_config.json', 'r') as f:
+      ej2 = json.load(f)
+      f.close()
+    beta, theta = utils.getDataForEj2(ej2)
     non_linear.main(learning_rate, epochs, bias, beta, theta)
   else:
     with open("./json/ej3_config.json") as jsonFile:

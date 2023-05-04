@@ -1,7 +1,6 @@
 import numpy as np
 
 import ej3_utils
-from  metrics import cross_validation
 from constants import FIRST, MIDDLE, LAST
 
 

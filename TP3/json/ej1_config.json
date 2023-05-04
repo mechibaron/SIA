@@ -1,0 +1,6 @@
+{
+    "operation": "XOR",
+    "operation_options": [
+        "AND", "XOR"
+    ]
+}

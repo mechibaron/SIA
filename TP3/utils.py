@@ -1,2 +1,6 @@
 def getDataFromFile(data):
-    return data['operation'], data['learning_rate'], data['epochs'], data['bias'], data['beta'], data['type_perceptron'], data['theta']
+    return data['learning_rate'], data['epochs'], data['bias'], data['type_perceptron']
+def getDataForEj1(data):
+    return data['operation']
+def getDataForEj2(data):
+    return data['beta'], data['theta']
