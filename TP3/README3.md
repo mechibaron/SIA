@@ -40,3 +40,10 @@ pip install math
     # item a => el archivo de configuración se encuentra bajo el nombre `ex3config/ej3_1_config.json`
     # item b => el archivo de configuración se encuentra bajo el nombre `ex3config/ej3_2_config.json`
     # item c => el archivo de configuración se encuentra bajo el nombre `ex3config/ej3_3_config.json`
+
+## Ejecución 🚀
+
+Para ejecutar el programa, simplemente se debe correr en la terminal el archivo main.py:
+```
+python3 main.py
+```
