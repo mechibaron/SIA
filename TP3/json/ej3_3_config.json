@@ -1,0 +1,9 @@
+{
+    "hiddenLayers": [10, 10],
+    "batch_size": 1,
+    "momentum": 0,
+    "adaptive_eta": 0,
+    "adaptive_k": 2,
+    "adaptive_inc": 0.5,
+    "adaptive_dec": 0.01
+}
