@@ -56,52 +56,55 @@ class NonlinearPerceptron:
         return ((X_scaled - self.a)/(self.b - self.a)*(X_max - X_min)) + X_min
     
     def train_online(self, X, Z):
+        # X1 = [arreglo[0] for arreglo in X]
+        # X2 = [arreglo[1] for arreglo in X]
+        # X3 = [arreglo[2] for arreglo in X]
+        # X1_min, X1_max = np.min(X1), np.max(X1)
+        # X2_min, X2_max = np.min(X2), np.max(X2)
+        # X3_min, X3_max = np.min(X3), np.max(X3)
+        # X1_scaled = self.scaler(X1, X1_min, X1_max)
+        # X2_scaled = self.scaler(X2, X2_min, X2_max)
+        # X3_scaled = self.scaler(X3, X3_min, X3_max)
+        # X_scaled = [[a, b, c] for a, b, c in zip(X1_scaled, X2_scaled, X3_scaled)]
+        # X_scaled = np.array(X_scaled)
         Z_min,Z_max = np.min(Z), np.max(Z)
-        X1 = [arreglo[0] for arreglo in X]
-        X2 = [arreglo[1] for arreglo in X]
-        X3 = [arreglo[2] for arreglo in X]
-        X1_min, X1_max = np.min(X1), np.max(X1)
-        X2_min, X2_max = np.min(X2), np.max(X2)
-        X3_min, X3_max = np.min(X3), np.max(X3)
         Z_scaled = self.scaler(Z, Z_min, Z_max)
-        X1_scaled = self.scaler(X1, X1_min, X1_max)
-        X2_scaled = self.scaler(X2, X2_min, X2_max)
-        X3_scaled = self.scaler(X3, X3_min, X3_max)
-        X_scaled = [[a, b, c] for a, b, c in zip(X1_scaled, X2_scaled, X3_scaled)]
-        X_scaled = np.array(X_scaled)
         Z_scaled = np.array(Z_scaled)
         error_by_epochs = []
         for epoch in range(self.epochs):
             outputs = []
             outputs_descaled = []
             for j in range(len(Z_scaled)):
-                output= self.predict(X_scaled[j])
+                output= self.predict(X[j])
                 output = np.array(output)
                 error = Z_scaled[j] - output
-                self.update_weights(X_scaled[j], error)
+                self.update_weights(X[j], error)
                 outputs.append(output)
                 output_descaled = self.descaler(output, Z_min, Z_max)                
                 outputs_descaled.append(output_descaled)
                 # print("esperado: ", Z[j], " obtenido: ", output_descaled)
             outputs_descaled = np.array(outputs_descaled)
-            mse = np.sqrt(self.mean_square_error(Z, outputs_descaled))
+            mse =self.mean_square_error(Z_scaled, outputs)/len(Z_scaled)
             error_by_epochs.append(mse)
             print(f"Epoch {epoch+1}: MSE = {mse}")
-            if(self.theta == 'tanh'):
-                if mse < 3: #Vimos con muchas pruebas que aprende hasta 2.8 aprox con un 70% del csv
-                    print("Stopping training. Converged.")
-                    break
-            else:    
-                if mse < 11: #Vimos con muchas pruebas que aprende hasta 10.28 aprox
-                    print("Stopping training. Converged.")
-                    break
+            # if(self.theta == 'tanh'):
+            #     if mse < 3: #Vimos con muchas pruebas que aprende hasta 2.8 aprox con un 70% del csv
+            #         print("Stopping training. Converged.")
+            #         break
+            # else:    
+            #     if mse < 11: #Vimos con muchas pruebas que aprende hasta 10.28 aprox
+            #         print("Stopping training. Converged.")
+            #         break
         return error_by_epochs
     
     def test(self, X_test, Z_test):
         outputs = []
+        Z_min,Z_max = np.min(Z_test), np.max(Z_test)
+        Z_scaled = self.scaler(Z_test, Z_min, Z_max)
+        
         for inputs in zip(X_test):
             outputs.append(self.predict(inputs))
-        mse = np.sqrt(self.mean_square_error(Z_test, outputs))
+        mse = self.mean_square_error(Z_scaled, outputs)/len(Z_scaled)
         print(f"Mean Square Error: {mse}")  
         return mse    
 
@@ -109,7 +112,7 @@ class NonlinearPerceptron:
         mse = 0
         for i in range(len(Z)):
             mse += (Z[i] - output[i])**2
-        mse /= len(Z)
+        # mse /= len(Z)
         return mse
     
 
