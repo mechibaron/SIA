@@ -57,7 +57,7 @@ class LinearPerceptron:
         outputs = []
         for inputs in zip(X_test):
             outputs.append(self.predict_linear(inputs))
-        mse = np.sqrt(self.mean_square_error(Z_test, outputs))
+        mse = self.mean_square_error(Z_test, outputs)
         print(f"Mean Square Error: {mse}")   
         return mse   
     
