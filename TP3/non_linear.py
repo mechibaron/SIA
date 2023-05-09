@@ -56,20 +56,17 @@ class NonlinearPerceptron:
         return ((X_scaled - self.a)/(self.b - self.a)*(X_max - X_min)) + X_min
     
     def train_online(self, X, Z):
-        # Z_min,Z_max = np.min(Z), np.max(Z)
         # X1 = [arreglo[0] for arreglo in X]
         # X2 = [arreglo[1] for arreglo in X]
         # X3 = [arreglo[2] for arreglo in X]
         # X1_min, X1_max = np.min(X1), np.max(X1)
         # X2_min, X2_max = np.min(X2), np.max(X2)
         # X3_min, X3_max = np.min(X3), np.max(X3)
-        # Z_scaled = self.scaler(Z, Z_min, Z_max)
         # X1_scaled = self.scaler(X1, X1_min, X1_max)
         # X2_scaled = self.scaler(X2, X2_min, X2_max)
         # X3_scaled = self.scaler(X3, X3_min, X3_max)
         # X_scaled = [[a, b, c] for a, b, c in zip(X1_scaled, X2_scaled, X3_scaled)]
         # X_scaled = np.array(X_scaled)
-        # Z_scaled = np.array(Z_scaled)
         Z_min,Z_max = np.min(Z), np.max(Z)
         Z_scaled = self.scaler(Z, Z_min, Z_max)
         Z_scaled = np.array(Z_scaled)
@@ -91,11 +88,11 @@ class NonlinearPerceptron:
             error_by_epochs.append(mse)
             print(f"Epoch {epoch+1}: MSE = {mse}")
             # if(self.theta == 'tanh'):
-            #     if mse < 10: #Vimos con muchas pruebas que aprende hasta 2.8 aprox con un 70% del csv
+            #     if mse < 3: #Vimos con muchas pruebas que aprende hasta 2.8 aprox con un 70% del csv
             #         print("Stopping training. Converged.")
             #         break
             # else:    
-            #     if mse < 10: #Vimos con muchas pruebas que aprende hasta 10.28 aprox
+            #     if mse < 11: #Vimos con muchas pruebas que aprende hasta 10.28 aprox
             #         print("Stopping training. Converged.")
             #         break
         return error_by_epochs
@@ -115,7 +112,7 @@ class NonlinearPerceptron:
         mse = 0
         for i in range(len(Z)):
             mse += (Z[i] - output[i])**2
-        mse /= len(Z)
+        # mse /= len(Z)
         return mse
     
 

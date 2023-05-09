@@ -42,9 +42,9 @@ class LinearPerceptron:
 
             # if(mse < 10 ): #Probando con tiradas vimos que aprende aprox hasta 9.5
             #     print("Stopping training. Converged.")
-            #     break
-        return error_by_epochs      
-            
+            #     break    
+        return error_by_epochs       
+      
                 
     def mean_square_error(self, Z, output):
         mse = 0
