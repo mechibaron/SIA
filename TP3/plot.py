@@ -12,6 +12,8 @@ import matplotlib.pyplot as plt
 testing_size = [0.1, 0.2, 0.3, 0.4, 0.5]
 random_values = [10,35,42]
 learning_rate_variation = [0.1, 0.01, 0.001, 0.0001]
+beta_variation = [0.3, 0.8, 1]
+
 
 def init():
     X = []
@@ -154,22 +156,28 @@ def show_variation_beta(learning_rate, epochs, bias, theta):
 
     X_train, X_test, Z_train, Z_test = train_test_split(X,Z,test_size=0.2, random_state=10)
 
-    beta_variations= [-1,-0.5, 0, 0.5, 1]
+    w = [[0.07390637, 0.21945717, 0.39816684, 0.4646161 ],
+[0.1692354,  0.06999783, 0.66982568, 0.37643645],
+[0.31565424, 0.40489565, 0.76876674, 0.67414795]]
 
     errors = {}
-    errors['Nonlinear'] = [] 
-    for beta in beta_variations:
-        perc = non_linear.NonlinearPerceptron(learning_rate, epochs, len(X[0]), theta, beta, bias)
-        perc.train_online(X_train, Z_train)
-        errors['Nonlinear'].append(perc.test(X_test, Z_test)[0])
+    # errors['Nonlinear'] = {} 
+    i = 0
+    for beta in beta_variation:
+        perc = non_linear.NonlinearPerceptron(learning_rate, epochs, len(X[0]), theta, beta, bias,w[i])
+        errors["Beta: " + str(beta)] = perc.train_online(X_train, Z_train)
+        i+=1
+        # errors['Nonlinear'].append(perc.test(X_test, Z_test)[0])
 
-    df = pd.DataFrame(errors, index=beta_variations)
+    df = pd.DataFrame(errors)
+    df.index = range(1, len(df) + 1)
 
-    ax = df.plot.bar()
+    print(df)
+    ax = df.plot(style='o')
     ax.set_title("Beta variations for tanh function for nonlinear")
-    ax.set_xlabel("Beta")
+    ax.set_xlabel("Epocs")
     ax.set_ylabel("MSE")
-    ax.legend().remove()
+    # ax.set_xlim(0,50)
     plt.show()
 
 def show_error_by_epoch(learning_rate, epochs, bias, beta, theta):
@@ -210,8 +218,9 @@ if __name__ == '__main__':
             ej2 = json.load(f)
             f.close()
         beta, theta = utils.getDataForEj2(ej2)
+    show_variation_beta(learning_rate,epochs,bias, theta)
     # operation, learning_rate, epochs, bias, beta, type_perceptron, theta = utils.getDataFromFile(data)
     # test_seed_and_size(learning_rate,epochs,beta, bias, theta)
-    show_error_by_epoch(learning_rate,epochs,beta, bias, theta)
+    # show_error_by_epoch(learning_rate,epochs,beta, bias, theta)
     # show_mse_with_ETA(epochs,beta, bias, theta)
  

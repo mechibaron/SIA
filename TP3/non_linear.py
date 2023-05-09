@@ -14,6 +14,7 @@ class NonlinearPerceptron:
         self.beta = beta
         if(w is None):
             self.weights = np.random.rand(input_size+1)
+            print(self.weights)
         else:
             self.weights = w
         if(theta == 'tanh'):
@@ -89,7 +90,7 @@ class NonlinearPerceptron:
             outputs_descaled = np.array(outputs_descaled)
             mse =self.mean_square_error(Z_scaled, outputs)/len(Z_scaled)
             error_by_epochs.append(mse)
-            print(f"Epoch {epoch+1}: MSE = {mse}")
+            # print(f"Epoch {epoch+1}: MSE = {mse}")
             # if(self.theta == 'tanh'):
             #     if mse < 10: #Vimos con muchas pruebas que aprende hasta 2.8 aprox con un 70% del csv
             #         print("Stopping training. Converged.")
