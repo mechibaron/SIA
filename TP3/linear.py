@@ -35,15 +35,15 @@ class LinearPerceptron:
                 outputs.append(O)
                 self.update_weigths_linear(X[j], error)
                 # print("weigths: ", self.weights)
-            mse = np.sqrt(self.mean_square_error(Z, outputs))
+            mse = self.mean_square_error(Z, outputs)
             error_by_epochs.append(mse)
-            
+
             print(f"Epoch {i+1}: Converged = {mse} ")
 
-            if(mse < 10 ): #Probando con tiradas vimos que aprende aprox hasta 9.5
-                print("Stopping training. Converged.")
-                break    
-        return error_by_epochs       
+            # if(mse < 10 ): #Probando con tiradas vimos que aprende aprox hasta 9.5
+            #     print("Stopping training. Converged.")
+            #     break
+        return error_by_epochs      
             
                 
     def mean_square_error(self, Z, output):
@@ -54,12 +54,12 @@ class LinearPerceptron:
         return mse
     
     def test(self, X_test, Z_test):
-        outputs = []
-        for inputs in zip(X_test):
-            outputs.append(self.predict_linear(inputs))
-        mse = np.sqrt(self.mean_square_error(Z_test, outputs))
-        print(f"Mean Square Error: {mse}")   
-        return mse   
+            outputs = []
+            for inputs in zip(X_test):
+                outputs.append(self.predict_linear(inputs))
+            mse = self.mean_square_error(Z_test, outputs)
+            print(f"Mean Square Error: {mse}")
+            return mse  
     
 
 def main(learning_rate, epochs, bias):
