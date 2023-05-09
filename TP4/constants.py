@@ -1,0 +1,5 @@
+BIAS = 1
+FIRST = 0
+MIDDLE = 1
+LAST = 2
+MULTILAYER = "multilayer"
