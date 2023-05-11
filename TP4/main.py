@@ -1,26 +1,23 @@
-import numpy as np
-
+import json
 import utils
-from constants import FIRST, MIDDLE, LAST
+import numpy as np
+from ej1 import ej1
 
+if __name__ == '__main__':
+  with open('./json/config.json', 'r') as f:
+    data = json.load(f)
+    f.close()
+  # define learning rate and epochs
+  # learning rate = eta (n)
+  learning_rate, epochs, exercise = utils.getDataFromFile(data)
+  if exercise == 1:
+    with open('./json/config_ej1.json', 'r') as f:
+      ej1_data = json.load(f)
+      f.close()
+    type_model, similitud, radio = utils.getDataFromEj1(ej1_data)
+    ej1(learning_rate, epochs, type_model, similitud, radio)
 
-def ej1(learning_rate, epochs, layers, batch_size, momentum=True, adaptive_params=None):
-    # inputs = ej3_utils.import_data('data/ej3_1_training_set',1)
-    # outputs = ej3_utils.normalize(np.array(ej3_utils.import_data('data/ej3_1_expected_output',1), dtype=float))
+  # else:
+    # ej2()
 
-    # training_set = np.array(inputs)
-    # expected_output = np.array(outputs)
-
-    # perceptron = ej3_utils.create_multilayer_perceptron_and_train(training_set, expected_output, learning_rate, epochs,
-    #                                                               layers, batch_size, momentum, adaptive_params)
-
-   
-    # results = np.array(perceptron.test_input(training_set), dtype=float)
-    # print('Expected      Result')
-
-    # for i in range(results.size):
-    #     r=1
-    #     if(results[i][0]<0):
-    #         r=-1
-    #     print(f'{expected_output[i][0]}\t\t{r}')
-    print("TODO")
+    

@@ -1,0 +1,5 @@
+{
+    "learning_rate":0.1, 
+    "epochs": 10, 
+    "exercise":1
+}

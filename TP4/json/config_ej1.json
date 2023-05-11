@@ -1,0 +1,5 @@
+{
+    "radio": 8,
+    "similitud": "euclides",
+    "type_model": "kohonen"
+}
