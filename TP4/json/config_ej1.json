@@ -1,6 +1,6 @@
 {
     "radio": 8,
-    "similitud": "euclides",
+    "similitud": "exponencial",
     "type_model": "kohonen",
-    "k":5
+    "k":4
 }
