@@ -7,7 +7,7 @@ def getDataFromFile(data):
     return data['learning_rate'], data['epochs'], data['exercise']
 
 def getDataFromEj1(data):
-    return data['type_model'], data['similitud'], data['radio']
+    return data['type_model'], data['similitud'], data['radio'], data['k']
 
 # def normalize(output):
 #     min_expected = min(output)
