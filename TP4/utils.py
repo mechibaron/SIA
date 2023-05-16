@@ -48,7 +48,7 @@ def import_data(file):
         else:
             names.append(i[0])
             data.append(i[1:])
-    return names, data, categories
+    return names, data, categories[0]
 
 
 

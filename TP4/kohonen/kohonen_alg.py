@@ -10,12 +10,13 @@ class Kohonen:
         self.neurons_reshape = self.neurons.reshape(k**2)
         self.weights = []
         for _ in range(k**2):
-            index = np.random.uniform(0,1)
-            # index = np.random.rand(0,1)
-            # index = np.random.randint(0, p-1)
-            # x = self.standard_i(X[index])
-            # self.weights.append(x) 
-        self.weights = np.random.rand(k**2,n)
+            index = np.random.randint(0, p-1)
+            if(n==1):
+                x = self.standard_i(X)
+            else:
+                x = self.standard_i(X[index])
+            self.weights.append(x) 
+        # self.weights = np.random.rand(k**2,n)
         self.radio = [radio,radio]
         self.learning_rate = [learning_rate,learning_rate]
         self.similitud = similitud
@@ -53,6 +54,12 @@ class Kohonen:
                 for p in range(self.n):
                     self.weights[j][p] += self.learning_rate[1] * (x[p]-self.weights[j][p])  
 
+    def regla_de_kohonen_per_category(self, distances, x):
+        for j in range(self.k**2):
+            # Si soy vecino actulizo mis pesos
+            if(j in distances):
+                self.weights[j] += self.learning_rate[1] * (x-self.weights[j])  
+
     def euclidea(self, x):
         w=[]
         for j in range(self.k**2): #recorriendo filas
@@ -89,17 +96,19 @@ class Kohonen:
                     distances.append(np.ravel_multi_index((i, j), self.neurons.shape))
         return distances
     
-    def neurons_weights(self):
-        w = []
-        for j in range(self.k**2):
-            w.append(np.mean(self.weights[j]))
-        return np.reshape(w,(self.k,self.k))
+    # def neurons_weights(self, idx):
+    #     w = []
+    #     for j in range(self.k**2):
+    #         # w.append(np.mean(self.weights[j]))
+    #         w.append(self.weights[j][idx])
+    #     return np.reshape(w,(self.k,self.k))
 
 
     def train_kohonen(self):
         X_standard = self.standard(self.X)
         # X_standard = X
         neuron_activations = np.zeros((self.k**2, len(X_standard)))
+        neuron_country = np.zeros(len(X_standard))
         # print(neuron_activations.shape)
         # print(neuron_activations)
         for i in range(self.epochs):
@@ -114,7 +123,8 @@ class Kohonen:
                 self.regla_de_kohonen(distances, x)
                 neuron_activations[winner_index][j] = 1
 
-                # print(f"Registro {j+1} asignado a la neurona {winner_index}")
+                print(f"Registro {j+1} asignado a la neurona {winner_index}")
+                neuron_country[j] = winner_index
             # Ajuste de radio:
             ajuste = self.radio[0] * (1 - i/self.epochs)
             self.radio[1] = 1 if ajuste < 1 else ajuste
@@ -125,6 +135,37 @@ class Kohonen:
             # self.learning_rate[1] = self.learning_rate[0] * np.exp(-decay_rate*i)
 
         self.neurons = self.neurons_reshape.reshape(self.k,self.k)
-        return self.neurons
-        # return self.neurons_weights()
-        # return self.neurons_weights(), self.predict(self.X)[1]
+        return self.neurons, neuron_country
+
+    def train_kohonen_per_category(self):
+        X_standard = self.standard_i(self.X)
+        # X_standard = X
+        neuron_activations = np.zeros((self.k**2, len(X_standard)))
+        neuron_country = np.zeros(len(X_standard))
+        # print(neuron_activations.shape)
+        # print(neuron_activations)
+        for i in range(self.epochs):
+            print(i)
+            for j in range(len(X_standard)):
+                # Seleccionar un registro de entrada X^p
+                x = X_standard[j]
+                # Encontrar la neurona ganadora
+                winner_index = self.winner(x)
+                distances = self.activation(winner_index, i)
+                # Actualizar los pesos segun kohonen
+                self.regla_de_kohonen_per_category(distances, x)
+                neuron_activations[winner_index][j] = 1
+
+                print(f"Registro {j+1} asignado a la neurona {winner_index}")
+                neuron_country[j] = winner_index
+            # Ajuste de radio:
+            ajuste = self.radio[0] * (1 - i/self.epochs)
+            self.radio[1] = 1 if ajuste < 1 else ajuste
+            # Ajuste de ETA:
+            self.learning_rate[1] = self.learning_rate[0] * (1 - i/self.epochs)
+            # Segunda opcion de ajuste de ETA mas abruta (para ppt probar la dif entre las dos)
+            # decay_rate es un hiperparametro que recibiriamos.
+            # self.learning_rate[1] = self.learning_rate[0] * np.exp(-decay_rate*i)
+
+        self.neurons = self.neurons_reshape.reshape(self.k,self.k)
+        return self.neurons, neuron_country
