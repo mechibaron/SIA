@@ -9,10 +9,12 @@ class Kohonen:
         self.neurons = np.zeros((k,k))
         self.neurons_reshape = self.neurons.reshape(k**2)
         self.weights = []
-        # for _ in range(k**2):
-        #     index = np.random.randint(0, p-1)
-        #     x = self.standard_i(X[index])
-        #     self.weights.append(x) 
+        for _ in range(k**2):
+            index = np.random.uniform(0,1)
+            # index = np.random.rand(0,1)
+            # index = np.random.randint(0, p-1)
+            # x = self.standard_i(X[index])
+            # self.weights.append(x) 
         self.weights = np.random.rand(k**2,n)
         self.radio = [radio,radio]
         self.learning_rate = [learning_rate,learning_rate]
@@ -20,7 +22,13 @@ class Kohonen:
         self.epochs = epochs
         self.X = X
     
-        
+    def predict(self, input_data):
+        activations = np.zeros((self.k, self.k))
+        for x in input_data:
+            winner_index = self.winner(x)
+            activations[winner_index] += 1
+        return activations   
+    
     def standard(self, X):
         X_standard = []
         for i in range(len(X)):
@@ -91,6 +99,9 @@ class Kohonen:
     def train_kohonen(self):
         X_standard = self.standard(self.X)
         # X_standard = X
+        neuron_activations = np.zeros((self.k**2, len(X_standard)))
+        # print(neuron_activations.shape)
+        # print(neuron_activations)
         for i in range(self.epochs):
             print(i)
             for j in range(len(X_standard)):
@@ -101,7 +112,9 @@ class Kohonen:
                 distances = self.activation(winner_index, i)
                 # Actualizar los pesos segun kohonen
                 self.regla_de_kohonen(distances, x)
+                neuron_activations[winner_index][j] = 1
 
+                # print(f"Registro {j+1} asignado a la neurona {winner_index}")
             # Ajuste de radio:
             ajuste = self.radio[0] * (1 - i/self.epochs)
             self.radio[1] = 1 if ajuste < 1 else ajuste
@@ -114,3 +127,4 @@ class Kohonen:
         self.neurons = self.neurons_reshape.reshape(self.k,self.k)
         return self.neurons
         # return self.neurons_weights()
+        # return self.neurons_weights(), self.predict(self.X)[1]
