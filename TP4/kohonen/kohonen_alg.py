@@ -2,10 +2,11 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import matplotlib
 
 class Kohonen:
 
-    def __init__(self,p, n, k,radio, learning_rate, similitud, epochs, X):
+    def __init__(self,p, n, k,radio, learning_rate, similitud, epochs, X,country_name_train, categories):
         self.p = p
         self.n = n
         self.k = k
@@ -27,6 +28,8 @@ class Kohonen:
         self.similitud = similitud
         self.epochs = epochs
         self.X = X
+        self.country_name_train = country_name_train
+        self.categories = categories
     
     def predict(self, input_data):
         activations = np.zeros((self.k, self.k))
@@ -112,6 +115,60 @@ class Kohonen:
                     distances.append(np.ravel_multi_index((i, j), self.neurons.shape))
         return distances
     
+    def plot_heatmap(self, similitud, neurons_countries):
+        fig, ax = plt.subplots(1, 1)
+        cmap = matplotlib.colors.LinearSegmentedColormap.from_list("", ["white", "orange", "red"])
+        im = ax.imshow(self.neurons, cmap=cmap)
+
+        for j in range(self.k**2):
+            winner_pos = np.array(np.unravel_index(j, self.neurons.shape))
+            country_label = ""
+            for idx in range(self.p):
+                if(neurons_countries[idx] == j):
+                    country_label = country_label + self.country_name_train[idx] + '\n'
+            ax.text(winner_pos[1], winner_pos[0], country_label, ha="center", va="center", color="black", fontsize=5)
+
+        fig.colorbar(im)
+        plt.title(f'Grilla de neuronas de {self.k}x{self.k} con similitud {similitud}')
+        ax.yaxis.set_major_locator(plt.NullLocator())  # remove y axis ticks
+        ax.xaxis.set_major_locator(plt.NullLocator())  # remove x axis ticks
+        plt.show()
+
+    def plot_category(self, categoryIdx, neurons_countries):
+        train_category = [fila[categoryIdx] for fila in self.X]
+        fig, ax = plt.subplots(1, 1)
+        cmap = matplotlib.colors.LinearSegmentedColormap.from_list("", ["white", "yellow", "green", "blue"])
+        avg_matriz = np.zeros((self.k,self.k))
+        for j in range(self.k**2):
+            winner_pos = np.array(np.unravel_index(j, self.neurons.shape))
+            country_label = ""
+            avg_j = []
+            for idx in range(self.p):
+                if(neurons_countries[idx] == j):
+                    avg_j.append(train_category[idx])
+                    country_label = country_label + self.country_name_train[idx]
+            avg_matriz[winner_pos[1], winner_pos[0]] = np.mean(avg_j)
+        im = ax.imshow(avg_matriz, cmap=cmap)
+        fig.colorbar(im)
+        plt.title(f'Grilla de neuronas de {self.k}x{self.k} para categoria: {self.categories[categoryIdx]}')
+        ax.yaxis.set_major_locator(plt.NullLocator())  # remove y axis ticks
+        ax.xaxis.set_major_locator(plt.NullLocator())  # remove x axis ticks
+        plt.show()
+
+    def plot_u_matrix(self):
+        distances = np.zeros(shape=(self.k, self.k))
+        for i in range(self.k):
+            for j in range(self.k):
+                distances[i][j] = self.get_neighbours_weight_distance([i, j])
+        fig, ax = plt.subplots(1, 1)
+        cmap = matplotlib.colors.LinearSegmentedColormap.from_list("", ["white", "grey"])
+        im = ax.imshow(distances, cmap=cmap)
+        fig.colorbar(im)
+        plt.title(f'Media de distancia euclidea entre pesos de neuronas vecinas')
+        ax.yaxis.set_major_locator(plt.NullLocator())  # remove y axis ticks
+        ax.xaxis.set_major_locator(plt.NullLocator())  # remove x axis ticks
+        plt.show()
+
     def barplot_x(self,X_standard):
         X = self.X
         X_n = X_standard
@@ -179,15 +236,12 @@ class Kohonen:
             # self.learning_rate[1] = self.learning_rate[0] * np.exp(-decay_rate*i)
 
         self.neurons = self.neurons_reshape.reshape(self.k,self.k)
-        return self.neurons, neuron_country
+        return neuron_country
 
     def train_kohonen_per_category(self):
         X_standard = self.standard_i(self.X)
-        # X_standard = X
         neuron_activations = np.zeros((self.k**2, len(X_standard)))
         neuron_country = np.zeros(len(X_standard))
-        # print(neuron_activations.shape)
-        # print(neuron_activations)
         for i in range(self.epochs):
             print(i)
             for j in range(len(X_standard)):
@@ -207,9 +261,6 @@ class Kohonen:
             self.radio[1] = 1 if ajuste < 1 else ajuste
             # Ajuste de ETA:
             self.learning_rate[1] = self.learning_rate[0] * (1 - i/self.epochs)
-            # Segunda opcion de ajuste de ETA mas abruta (para ppt probar la dif entre las dos)
-            # decay_rate es un hiperparametro que recibiriamos.
-            # self.learning_rate[1] = self.learning_rate[0] * np.exp(-decay_rate*i)
 
         self.neurons = self.neurons_reshape.reshape(self.k,self.k)
-        return self.neurons, neuron_country, self.weights
+        return neuron_country

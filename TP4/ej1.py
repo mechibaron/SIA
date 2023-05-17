@@ -16,44 +16,34 @@ def ej1(learning_rate, epochs, type_model, similitud, radio, k):
     p = len(training_set)
     n = len(training_set[0])
     if(type_model == 'kohonen'): 
-        model = kohonen_alg.Kohonen(p, n, k, radio, learning_rate, similitud, epochs,training_set)
-        neurons_weights, neurons_countries = model.train_kohonen()
+        model = kohonen_alg.Kohonen(p, n, k, radio, learning_rate, similitud, epochs,training_set,country_name_train, categories)
+        neurons_countries = model.train_kohonen()
+        model.plot_heatmap(similitud, neurons_countries)
 
-        # fig, ax = plt.subplots(1, 1)
-        # cmap = matplotlib.colors.LinearSegmentedColormap.from_list("", ["white", "orange", "red"])
-        # im = ax.imshow(neurons_weights, cmap=cmap)
+        # Categories Heatmap
+        for categoryIdx in range(len(categories)):
+            model.plot_category(categoryIdx, neurons_countries)
 
-        # for j in range(k**2):
-        #     winner_pos = np.array(np.unravel_index(j, neurons_weights.shape))
-        #     country_label = ""
-        #     for idx in range(p):
-        #         if(neurons_countries[idx] == j):
-        #             country_label = country_label + country_name_train[idx] + '\n'
-        #     ax.text(winner_pos[1], winner_pos[0], country_label, ha="center", va="center", color="black", fontsize=5)
+        # Matriz U
+        model.plot_u_matrix()
 
-        # fig.colorbar(im)
-        # plt.title(f'Grilla de neuronas de {k}x{k} con similitud {similitud}')
-        # ax.yaxis.set_major_locator(plt.NullLocator())  # remove y axis ticks
-        # ax.xaxis.set_major_locator(plt.NullLocator())  # remove x axis ticks
-        # plt.show()
-
-        # Categories
+        # Categories Train
         # for categoryIdx in range(len(categories)):
         #     train_category = [fila[categoryIdx] for fila in training_set]
         #     print(train_category)
 
         #     p = len(train_category)
         #     n = 1
-        #     model = kohonen_alg.Kohonen(p, n, k, radio, learning_rate, similitud, epochs,train_category)
-        #     neurons_weights, neurons_countries = model.train_kohonen_per_category()
+        #     model = kohonen_alg.Kohonen(p, n, k, radio, learning_rate, similitud, epochs,train_category,country_name_train, categories)
+        #     neurons_countries = model.train_kohonen_per_category()
 
         #     fig, ax = plt.subplots(1, 1)
         #     cmap = matplotlib.colors.LinearSegmentedColormap.from_list("", ["white", "orange", "red"])
-        #     im = ax.imshow(neurons_weights, cmap=cmap)
+        #     im = ax.imshow(model.neurons, cmap=cmap)
 
 
         #     for j in range(k**2):
-        #         winner_pos = np.array(np.unravel_index(j, neurons_weights.shape))
+        #         winner_pos = np.array(np.unravel_index(j, model.neurons.shape))
         #         country_label = ""
         #         for idx in range(p):
         #             if(neurons_countries[idx] == j):
@@ -61,24 +51,10 @@ def ej1(learning_rate, epochs, type_model, similitud, radio, k):
         #         ax.text(winner_pos[1], winner_pos[0], country_label, ha="center", va="center", color="black", fontsize=5)
 
         #     fig.colorbar(im)
-        #     plt.title(f'Grilla de neuronas de {k}x{k} para categoria: {categories[categoryIdx]}')
+        #     plt.title(f'Grilla de neuronas de {k}x{k} para categoria: {categories[categoryIdx]} con Uniform Distributed Weights')
         #     ax.yaxis.set_major_locator(plt.NullLocator())  # remove y axis ticks
         #     ax.xaxis.set_major_locator(plt.NullLocator())  # remove x axis ticks
         #     plt.show()
-
-        # Matriz U
-        distances = np.zeros(shape=(k, k))
-        for i in range(k):
-            for j in range(k):
-                distances[i][j] = model.get_neighbours_weight_distance([i, j])
-        fig, ax = plt.subplots(1, 1)
-        cmap = matplotlib.colors.LinearSegmentedColormap.from_list("", ["white", "grey"])
-        im = ax.imshow(distances, cmap=cmap)
-        fig.colorbar(im)
-        plt.title(f'Media de distancia euclidea entre pesos de neuronas vecinas')
-        ax.yaxis.set_major_locator(plt.NullLocator())  # remove y axis ticks
-        ax.xaxis.set_major_locator(plt.NullLocator())  # remove x axis ticks
-        plt.show()
 
     # else:
     #  modelo de oja
