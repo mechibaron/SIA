@@ -1,6 +1,6 @@
 {
     "radio": 8,
-    "similitud": "exponencial",
+    "similitud": "euclidea",
     "type_model": "kohonen",
     "k":4
 }

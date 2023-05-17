@@ -1,4 +1,7 @@
 import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 class Kohonen:
 
@@ -9,6 +12,7 @@ class Kohonen:
         self.neurons = np.zeros((k,k))
         self.neurons_reshape = self.neurons.reshape(k**2)
         self.weights = []
+        # Input Related Weight
         for _ in range(k**2):
             index = np.random.randint(0, p-1)
             if(n==1):
@@ -16,6 +20,7 @@ class Kohonen:
             else:
                 x = self.standard_i(X[index])
             self.weights.append(x) 
+        # Uniform Distributed Weight
         # self.weights = np.random.rand(k**2,n)
         self.radio = [radio,radio]
         self.learning_rate = [learning_rate,learning_rate]
@@ -39,7 +44,18 @@ class Kohonen:
     def standard_i(self,x):
         mean =[np.mean(x) for _ in range(len(x))]
         std = [np.std(x) for _ in range(len(x))]
-        return (x - np.array(mean))/np.array(std)    
+        return (x - np.array(mean))/np.array(std) 
+
+    def get_neighbours_weight_distance(self, winner_pos):
+        distances=[]
+        for i in range(self.k):
+            for j in range(self.k):
+                distance = self.get_neighbours_distance(np.array(winner_pos), [i,j])
+                # Veo si son vecinos
+                if(distance <= self.radio[1]):
+                    distances.append(distance)
+        return np.mean(distances)
+
     
     def get_neighbours_distance(self, winner_pos, neurons):
         #winner_pos = [x,y]
@@ -75,7 +91,7 @@ class Kohonen:
         return w.index(wk)
     
     def winner(self, x):
-        if(self.similitud == "euclides"):
+        if(self.similitud == "euclidea"):
             return self.euclidea(x)
         else:
             return self.exponencial(x)
@@ -96,21 +112,51 @@ class Kohonen:
                     distances.append(np.ravel_multi_index((i, j), self.neurons.shape))
         return distances
     
-    # def neurons_weights(self, idx):
-    #     w = []
-    #     for j in range(self.k**2):
-    #         # w.append(np.mean(self.weights[j]))
-    #         w.append(self.weights[j][idx])
-    #     return np.reshape(w,(self.k,self.k))
+    def barplot_x(self,X_standard):
+        X = self.X
+        X_n = X_standard
+        area_x=[fila[0] for fila in X]
+        gdp_x=[fila[1] for fila in X]
+        inf_x=[fila[2] for fila in X]
+        life_x=[fila[3] for fila in X]
+        mil_x=[fila[4] for fila in X]
+        pop_x=[fila[5] for fila in X]
+        unem_x=[fila[6] for fila in X]
 
+        area_xn=[fila[0] for fila in X_n]
+        gdp_xn=[fila[1] for fila in X_n]
+        inf_xn=[fila[2] for fila in X_n]
+        life_xn=[fila[3] for fila in X_n]
+        mil_xn=[fila[4] for fila in X_n]
+        pop_xn=[fila[5] for fila in X_n]
+        unem_xn=[fila[6] for fila in X_n]
+
+        dfx= {'Area': area_x, 'GDP': gdp_x,'Inflation':inf_x,'Life Expect':life_x, 'Military': mil_x, 'Population Growth': pop_x, 'Unemployment': unem_x}
+        dfx_data=pd.DataFrame(data=dfx, index = None)
+        dfxn= {'Area': area_xn, 'GDP': gdp_xn,'Inflation':inf_xn,'Life Expect':life_xn, 'Military': mil_xn, 'Population Growth': pop_xn, 'Unemployment': unem_xn}
+        dfxn_data=pd.DataFrame(data=dfxn, index = None)
+
+        plt.figure(figsize=(25,13))
+        plt.xlabel('Features',fontsize=15) 
+        plt.ylabel('Value',fontsize=15)
+        plt.title(('Non-Standarized Inputs'))
+        dfx_data.boxplot(column=['Area', 'GDP', 'Inflation','Life Expect','Military','Population Growth','Unemployment'])
+        plt.show()
+
+        plt.figure(figsize=(25,13))
+        plt.xlabel('Features',fontsize=15) 
+        plt.ylabel('Value',fontsize=15)
+        plt.title(('Standarized Inputs'))
+        dfxn_data.boxplot(column=['Area', 'GDP', 'Inflation','Life Expect','Military','Population Growth','Unemployment'])
+        plt.show()
+
+        return None
 
     def train_kohonen(self):
         X_standard = self.standard(self.X)
-        # X_standard = X
+        # self.barplot_x(X_standard)
         neuron_activations = np.zeros((self.k**2, len(X_standard)))
         neuron_country = np.zeros(len(X_standard))
-        # print(neuron_activations.shape)
-        # print(neuron_activations)
         for i in range(self.epochs):
             print(i)
             for j in range(len(X_standard)):
@@ -122,8 +168,6 @@ class Kohonen:
                 # Actualizar los pesos segun kohonen
                 self.regla_de_kohonen(distances, x)
                 neuron_activations[winner_index][j] = 1
-
-                print(f"Registro {j+1} asignado a la neurona {winner_index}")
                 neuron_country[j] = winner_index
             # Ajuste de radio:
             ajuste = self.radio[0] * (1 - i/self.epochs)
@@ -168,4 +212,4 @@ class Kohonen:
             # self.learning_rate[1] = self.learning_rate[0] * np.exp(-decay_rate*i)
 
         self.neurons = self.neurons_reshape.reshape(self.k,self.k)
-        return self.neurons, neuron_country
+        return self.neurons, neuron_country, self.weights
