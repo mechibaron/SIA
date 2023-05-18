@@ -63,9 +63,9 @@ barplot_x(X_standard, X)
 
 pca = PCA(n_components=2)
 
-principalComponents = pca.fit_transform(X_standard)
+X_transformed = pca.fit_transform(X_standard)
 
-principalDf = pd.DataFrame(data = principalComponents
+principalDf = pd.DataFrame(data = X_transformed
              , columns = ['principal component 1', 'principal component 2'])
 
 finalDf = pd.concat([principalDf, df[['Country']]], axis = 1)
@@ -81,8 +81,8 @@ for i in range(len(countries)):
                , finalDf.loc[indicesToKeep, 'principal component 2']
                , s = 50)
     # ax.text(finalDf.loc[indicesToKeep, 'principal component 1']
-    #            , finalDf.loc[indicesToKeep, 'principal component 2']
-    #            , countries[i])
+    #         , finalDf.loc[indicesToKeep, 'principal component 2']
+    #         , countries[i])
 
 coeff = np.transpose(pca.components_[0:2, :])
 n = coeff.shape[0]
