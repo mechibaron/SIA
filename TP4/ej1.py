@@ -18,14 +18,14 @@ def ej1(learning_rate, epochs, type_model, similitud, radio, k):
     if(type_model == 'kohonen'): 
         model = kohonen_alg.Kohonen(p, n, k, radio, learning_rate, similitud, epochs,training_set,country_name_train, categories)
         neurons_countries = model.train_kohonen()
-        model.plot_heatmap(similitud, neurons_countries)
+        # model.plot_heatmap(similitud, neurons_countries)
 
         # Categories Heatmap
-        for categoryIdx in range(len(categories)):
-            model.plot_category(categoryIdx, neurons_countries)
+        # for categoryIdx in range(len(categories)):
+        #     model.plot_category(categoryIdx, neurons_countries)
 
         # Matriz U
-        model.plot_u_matrix()
+        model.plot_u_matrix(similitud)
 
         # Categories Train
         # for categoryIdx in range(len(categories)):

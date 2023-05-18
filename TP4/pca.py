@@ -3,9 +3,7 @@ import pandas as pd
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 import numpy as np
-import utils
-from sklearn import datasets
-import random
+import seaborn as sns 
 
 def barplot_x(X_standard):
         X_n = X_standard
@@ -97,3 +95,10 @@ ax.legend(countries)
 ax.grid()
 plt.show()
 
+# explained_variances = pca.explained_variance_ratio_
+
+# plt.bar(range(1,len(explained_variances)+1), explained_variances)
+# plt.xlabel('Componentes Principales')
+# plt.ylabel('Varianza Explicada')
+# plt.show()
+# components_df = pd.DataFrame(data=loadings, columns=['PC1', 'PC2'])

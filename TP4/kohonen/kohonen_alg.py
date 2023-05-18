@@ -49,14 +49,20 @@ class Kohonen:
         std = [np.std(x) for _ in range(len(x))]
         return (x - np.array(mean))/np.array(std) 
 
-    def get_neighbours_weight_distance(self, winner_pos):
+    def get_neighbours_weight_distance(self, winner_pos, similitud):
         distances=[]
         for i in range(self.k):
             for j in range(self.k):
                 distance = self.get_neighbours_distance(np.array(winner_pos), [i,j])
                 # Veo si son vecinos
                 if(distance <= self.radio[1]):
-                    distances.append(distance)
+                    n_idx = np.ravel_multi_index((i, j), self.neurons.shape)
+                    w_idx = np.ravel_multi_index((winner_pos[0], winner_pos[1]), self.neurons.shape)
+                    # distances.append(distance)
+                    if(similitud == 'euclidea'):
+                        distances.append(np.linalg.norm(self.weights[w_idx] - self.weights[n_idx]))
+                    else:
+                        distances.append(np.exp(-((np.linalg.norm(self.weights[w_idx] - self.weights[n_idx]))**2)))
         return np.mean(distances)
 
     
@@ -155,16 +161,18 @@ class Kohonen:
         ax.xaxis.set_major_locator(plt.NullLocator())  # remove x axis ticks
         plt.show()
 
-    def plot_u_matrix(self):
+    def plot_u_matrix(self, similitud):
+        fig, ax = plt.subplots(1, 1)
         distances = np.zeros(shape=(self.k, self.k))
         for i in range(self.k):
             for j in range(self.k):
-                distances[i][j] = self.get_neighbours_weight_distance([i, j])
-        fig, ax = plt.subplots(1, 1)
-        cmap = matplotlib.colors.LinearSegmentedColormap.from_list("", ["white", "grey"])
+                distances[i][j] = self.get_neighbours_weight_distance([i, j], similitud)
+                ax.text(j, i, distances[i][j] , ha="center", va="center", color="red", fontsize=5)
+
+        cmap = matplotlib.colors.LinearSegmentedColormap.from_list("", ["white", "grey", "black"])
         im = ax.imshow(distances, cmap=cmap)
         fig.colorbar(im)
-        plt.title(f'Media de distancia euclidea entre pesos de neuronas vecinas')
+        plt.title(f'Media de distancia {similitud} entre pesos de neuronas vecinas')
         ax.yaxis.set_major_locator(plt.NullLocator())  # remove y axis ticks
         ax.xaxis.set_major_locator(plt.NullLocator())  # remove x axis ticks
         plt.show()
