@@ -10,32 +10,30 @@ def getDataFromFile(data):
 def getDataFromEj1(data):
     return data['similitud'], data['radio'], data['k']
 
-# def normalize(output):
-#     min_expected = min(output)
-#     max_expected = max(output)
-#     return np.array(list(map(lambda x: 2 * ((x - min_expected) / (max_expected - min_expected)) - 1, output)))
+def getDataFromEj2(data):
+    return data['train_letters']
 
-
-# def import_data(file, quantity):
-#     csv_file = open(file, 'r')
-#     csv_reader = csv.reader(csv_file, delimiter=" ")
-#     data = []
-#     entry = []
-#     row_count = 0
-#     for row in csv_reader:
-#         if quantity == 1:
-#             entry = [float(a) for a in row if a != '']
-#             data.append(entry)
-#         else:
-#             row_count += 1
-#             for a in row:
-#                 if a != '':
-#                     entry.append(float(a))
-#             if row_count == quantity:
-#                 data.append(entry)
-#                 entry = []
-#                 row_count = 0
-#     return data
+def import_letters_data(file, quantity):
+    csv_file = open(file, 'r', newline='\n')
+    csv_reader = csv.reader(csv_file, delimiter=" ")
+    # Arreglo donde van a estar las 25 matrices (1 por letra)
+    entry = []
+    row_count = 0
+    matrix = []
+    matrix = np.empty((quantity,quantity))
+    data = []
+    for row in csv_reader:
+        for a in row:
+            if a != '':
+                data.append(a)
+        matrix[row_count] = data
+        data = []
+        row_count += 1
+        if row_count == quantity:
+            entry.append(matrix)
+            matrix = np.empty((quantity,quantity))
+            row_count = 0
+    return entry
 
 def import_data(file):
     csv_file = open(file, 'r')
