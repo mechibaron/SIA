@@ -5,13 +5,16 @@ from multilayer.multilayer_perceptron import MultilayerPerceptron
 
 
 def getDataFromFile(data):
-    return data['learning_rate'], data['epochs'], data['exercise'], data['type_model']
+    return data['epochs'], data['exercise']
 
 def getDataFromEj1(data):
+    return data['learning_rate'], data['type_model']
+
+def getDataFromKohonen(data):
     return data['similitud'], data['radio'], data['k']
 
 def getDataFromEj2(data):
-    return data['train_letters']
+    return data['train_letters'], data['noisy_letter'], data['noise_probability']
 
 def import_letters_data(file, quantity):
     csv_file = open(file, 'r', newline='\n')

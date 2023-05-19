@@ -1,16 +1,15 @@
 import numpy as np
 import utils
-import matplotlib.pyplot as plt
-from hopfield import plots
+from hopfield import plots, hopfield
 import json
 
-def ej2(learning_rate, epochs):
+def ej2(epochs):
     letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
     matrix_letters = utils.import_letters_data('./data/letters_matrix', 5)
     with open('./json/config_hopfield.json', 'r') as f:
         ej2_data = json.load(f)
         f.close()
-    train_letters = utils.getDataFromEj2(ej2_data)
+    train_letters, noisy_letter, noise_probability = utils.getDataFromEj2(ej2_data)
 
     train_letters_idx = []
     for letter in train_letters:
@@ -19,30 +18,40 @@ def ej2(learning_rate, epochs):
             train_letters_idx.append(index)
 
     # Print de letras de testeo
+    train_matrix = []
     for letter_idx in train_letters_idx:
-        plots.plot_letter(matrix_letters[letter_idx])
+        train_matrix.append(matrix_letters[letter_idx])
+        # plots.plot_letter(matrix_letters[letter_idx])
+        
+    # Inicializo con matrices de entrenamiento
+    model = hopfield.Hopfield(epochs,5, train_matrix)
     
     # Noisy letters
-    for noise_idx in train_letters_idx:
-        noise_letter = create_noise(matrix_letters[noise_idx])
-        # Print de letras noisy
-        plots.plot_letter(noise_letter)
+    noise_idx = get_letter_idx(letters, noisy_letter)
+    noise_letter = create_noise(matrix_letters[noise_idx], noise_probability)
 
+    # Print de letras noisy
+    plots.plot_letter(noise_letter)
+
+    find, state = model.train(noise_letter)
+    #Print de estado estable
+    if (find == True):
+        plots.plot_letter(matrix_letters[state])
+    else:
+        plots.plot_letter(state)
 
     return None
 
 
-def create_noise(test_set):
+def create_noise(test_set, noise_probability):
     for i in range(len(test_set)):
         for j in range(len(test_set[i])):
-            test_set[i][j] = noise(test_set[i][j])
+            test_set[i][j] = noise(test_set[i][j], noise_probability)
     return test_set
 
-
-def noise(number):
+def noise(number, noise_probability):
     probability = np.random.rand(1)[0]
-    print(probability)
-    if probability < 0.1:
+    if probability < noise_probability:
         if number == 1:
             return -1
         else:

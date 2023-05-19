@@ -8,8 +8,13 @@ import pandas as pd
 import json
 
 
-def ej1(learning_rate, epochs, type_model):
+def ej1(epochs):
 
+    with open('./json/config_ej1.json', 'r') as f:
+                ej1_data = json.load(f)
+                f.close()
+    learning_rate, type_model = utils.getDataFromEj1(ej1_data)
+    
     if(type_model == 'kohonen'): 
         input_names, inputs, categories = utils.import_data('data/europe.csv')
         country_name_train = np.array(input_names)
@@ -19,9 +24,9 @@ def ej1(learning_rate, epochs, type_model):
         n = len(training_set[0])
 
         with open('./json/config_kohonen.json', 'r') as f:
-            ej1_data = json.load(f)
+            kohonen_data = json.load(f)
             f.close()
-        similitud, radio, k = utils.getDataFromEj1(ej1_data)
+        similitud, radio, k = utils.getDataFromKohonen(kohonen_data)
         
         model = kohonen_alg.Kohonen(p, n, k, radio, learning_rate, similitud, epochs,training_set,country_name_train, categories)
         neurons_countries = model.train_kohonen()

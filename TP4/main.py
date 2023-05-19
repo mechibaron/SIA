@@ -8,11 +8,11 @@ if __name__ == '__main__':
     data = json.load(f)
     f.close()
 
-  learning_rate, epochs, exercise, type_model = utils.getDataFromFile(data)
+  epochs, exercise = utils.getDataFromFile(data)
   if exercise == 1:
-    ej1(learning_rate, epochs, type_model)
+    ej1(epochs)
   
   else:
-    ej2(learning_rate, epochs)
+    ej2(epochs)
 
     

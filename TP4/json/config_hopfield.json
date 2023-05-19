@@ -1,3 +1,5 @@
 {
-    "train_letters": ["A", "B", "C", "D"]
+    "train_letters": ["A", "B", "C", "D"],
+    "noisy_letter":"C",
+    "noise_probability":0.1
   }
