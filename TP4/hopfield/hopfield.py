@@ -12,7 +12,7 @@ class Hopfield:
         self.training_letters = [matriz.flatten() for matriz in training_letters]
         self.p = len(self.training_letters)
         # Weights transpose
-        self.weights = np.dot(np.transpose(self.training_letters), self.training_letters) / self.n
+        self.weights = np.matmul(np.transpose(self.training_letters), self.training_letters) / self.n
         np.fill_diagonal(self.weights, 0)
 
         self.state_neurons = []
@@ -62,6 +62,8 @@ class Hopfield:
         for i in range(self.n):
             new_state = self.step_function(np.inner(self.weights[i], self.state_neurons))
             self.state_neurons[i] = new_state
+        # Try to implement a new idea but nothing changes
+        # self.state_neurons = np.sign(np.dot(self.weights, self.state_neurons))
         self.state_energy.append(self.energy())
         
             
