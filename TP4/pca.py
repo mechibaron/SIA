@@ -28,7 +28,7 @@ def barplot_x(X_standard, X):
         dfxn= {'Area': area_xn, 'GDP': gdp_xn,'Inflation':inf_xn,'Life Expect':life_xn, 'Military': mil_xn, 'Population Growth': pop_xn, 'Unemployment': unem_xn}
         dfxn_data=pd.DataFrame(data=dfxn, index = None)
 
-        plt.figure(figsize=(25,13))
+        plt.figure(figsize=(10,6))
         plt.xlabel('Features',fontsize=15) 
         plt.ylabel('Value',fontsize=15)
         plt.title(('Non-Standarized Inputs'))
@@ -84,6 +84,8 @@ for i in range(len(countries)):
     #         , finalDf.loc[indicesToKeep, 'principal component 2']
     #         , countries[i])
 
+
+    
 coeff = np.transpose(pca.components_[0:2, :])
 n = coeff.shape[0]
 for i in range(n):
@@ -101,3 +103,8 @@ plt.xlabel('Countries')
 plt.ylabel('Componentes Principales')
 plt.xticks(np.arange(len(countries)), countries,rotation=45, fontsize=8)
 plt.show()
+
+#para ver los valores no es necesario
+# print("Interpretación de la primera componente:")
+# for i in range(len(features)):
+#     print(f"{features[i]}: {principal_comp[i]: .4f}")

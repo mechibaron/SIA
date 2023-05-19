@@ -3,8 +3,10 @@ import numpy as np
 from constants import FIRST, LAST, MIDDLE
 from multilayer.multilayer_perceptron import MultilayerPerceptron
 
+#def getDataFromFile(data):
+#    return data['learning_rate'], data['epochs'], data['exercise']
 def getDataFromFile(data):
-    return data['learning_rate'], data['epochs'], data['exercise']
+    return data['learning_rate'], data['epochs']
 
 def getDataFromEj1(data):
     return data['type_model'], data['similitud'], data['radio'], data['k']
