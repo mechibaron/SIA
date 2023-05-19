@@ -1,6 +1,6 @@
 {
     "learning_rate":0.5, 
     "epochs": 500, 
-    "exercise":1
-
+    "exercise":1,
+    "type_model": "oja"
 }

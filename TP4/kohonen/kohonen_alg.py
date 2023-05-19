@@ -167,7 +167,7 @@ class Kohonen:
         for i in range(self.k):
             for j in range(self.k):
                 distances[i][j] = self.get_neighbours_weight_distance([i, j], similitud)
-                ax.text(j, i, distances[i][j] , ha="center", va="center", color="red", fontsize=5)
+                # ax.text(j, i, distances[i][j] , ha="center", va="center", color="red", fontsize=5)
 
         cmap = matplotlib.colors.LinearSegmentedColormap.from_list("", ["white", "grey", "black"])
         im = ax.imshow(distances, cmap=cmap)
