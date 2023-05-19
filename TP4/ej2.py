@@ -33,20 +33,18 @@ def ej2(epochs):
     # Print de letras noisy
     plots.plot_letter(noise_letter)
 
-    find, state = model.train(noise_letter)
-    #Print de estado estable
-    if (find == True):
-        plots.plot_letter(matrix_letters[state])
-    else:
-        plots.plot_letter(state)
+    # Devuelve el estado al que llego
+    state = model.train(matrix_letters[2])
+    plots.plot_letter(state)
 
     return None
 
 
-def create_noise(test_set, noise_probability):
-    for i in range(len(test_set)):
-        for j in range(len(test_set[i])):
-            test_set[i][j] = noise(test_set[i][j], noise_probability)
+def create_noise(matrix, noise_probability):
+    test_set = np.zeros((len(matrix), len(matrix[0])))
+    for i in range(len(matrix)):
+        for j in range(len(matrix[i])):
+            test_set[i][j] = noise(matrix[i][j], noise_probability)
     return test_set
 
 def noise(number, noise_probability):

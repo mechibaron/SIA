@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from hopfield import plots
 
 class Hopfield:
 
@@ -7,6 +8,7 @@ class Hopfield:
         self.epochs = epochs
         self.mu = mu
         self.n = mu**2
+        self.matrix_training_letters = training_letters
         self.training_letters = [matriz.flatten() for matriz in training_letters]
         self.p = len(self.training_letters)
         # Weights transpose
@@ -22,19 +24,17 @@ class Hopfield:
         self.state_energy.append(self.energy())
         for e in range(self.epochs):
             # Si no converge continuo con hopfield
-            print(e)
-            if(self.converge() == False):
-                self.hopfield()
-                self.state_energy.append(self.energy())
-                print("state:",self.state_neurons)
-            else:
-                f_s = self.state_neurons
-                self.hopfield()
-                self.state_energy.append(self.energy())
-                # Si es estados se mantiene => estado estable
-                if(np.array_equal(f_s, self.state_neurons) == True):
-                    # Devuelvo el mas similar a noise_letter de training_letters
-                    return True, self.find_in_matrix()
+            converge, idx = self.converge()
+            previous_state = self.state_neurons
+            self.hopfield()
+            response = self.state_neurons.reshape((self.mu, self.mu))
+            if(np.array_equal(previous_state, self.state_neurons) == True):
+                if (converge == True):
+                    response =  self.matrix_training_letters[idx]
+                    break
+                else: 
+                    response = self.state_neurons.reshape((self.mu, self.mu))
+                    break
 
         
         new_list = range(0, e+1)
@@ -44,24 +44,23 @@ class Hopfield:
         plt.xlabel('Epochs')
         plt.xticks(new_list)
         plt.show()
+
         # Si no encontre estado estable devuelvo false y el ultimo estado alcanzado
-        return False, self.state_neurons.reshape((self.mu, self.mu))
+        return response
 
     def hopfield(self):
+        new_state = []
         for i in range(self.n):
-            new_state = np.inner(self.weights[i], self.state_neurons)
-            self.state_neurons[i] = self.step_function(new_state)
-
-    def find_in_matrix(self):
-        for i, fila in enumerate(self.training_letters):
-            if np.all(fila == self.state_neurons):
-                 return i
+            new_state.append(self.step_function(np.inner(self.weights[i], self.state_neurons)))
+        self.state_neurons = np.array(new_state)
+        self.state_energy.append(self.energy())
+        
             
     def converge(self):
         for l in range(len(self.training_letters)):
             if (np.array_equal(self.training_letters[l], self.state_neurons) == True):
-                return True
-        return False
+                return True, l
+        return False, -1
 
     def energy(self):
         result = 0
