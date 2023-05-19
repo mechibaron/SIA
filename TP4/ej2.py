@@ -34,7 +34,7 @@ def ej2(epochs):
     plots.plot_letter(noise_letter)
 
     # Devuelve el estado al que llego
-    state = model.train(matrix_letters[2])
+    state = model.train(noise_letter)
     plots.plot_letter(state)
 
     return None

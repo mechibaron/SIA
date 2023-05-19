@@ -23,11 +23,20 @@ class Hopfield:
         self.state_neurons = noise_letter.flatten()
         self.state_energy.append(self.energy())
         for e in range(self.epochs):
+            print("Iteration: ", e)
             # Si no converge continuo con hopfield
             converge, idx = self.converge()
             previous_state = self.state_neurons
             self.hopfield()
             response = self.state_neurons.reshape((self.mu, self.mu))
+            # Lo que nos esta pasando es que es estado se actuliza a lo mas cercano a la primera iteracion y no avanza desde ahi
+            # if(converge == True):
+            #     if (np.array_equal(previous_state, self.state_neurons) == True):
+            #         response =  self.matrix_training_letters[idx]
+            #         break
+            #     else: 
+            #         response = self.state_neurons.reshape((self.mu, self.mu))
+            #         break
             if(np.array_equal(previous_state, self.state_neurons) == True):
                 if (converge == True):
                     response =  self.matrix_training_letters[idx]
@@ -51,8 +60,8 @@ class Hopfield:
     def hopfield(self):
         new_state = []
         for i in range(self.n):
-            new_state.append(self.step_function(np.inner(self.weights[i], self.state_neurons)))
-        self.state_neurons = np.array(new_state)
+            new_state = self.step_function(np.inner(self.weights[i], self.state_neurons))
+            self.state_neurons[i] = new_state
         self.state_energy.append(self.energy())
         
             
