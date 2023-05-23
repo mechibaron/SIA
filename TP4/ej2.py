@@ -4,7 +4,7 @@ from hopfield import plots, hopfield
 import json
 
 def ej2(epochs):
-    letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+    letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
     matrix_letters = utils.import_letters_data('./data/letters_matrix', 5)
     with open('./json/config_hopfield.json', 'r') as f:
         ej2_data = json.load(f)
@@ -21,8 +21,18 @@ def ej2(epochs):
     train_matrix = []
     for letter_idx in train_letters_idx:
         train_matrix.append(matrix_letters[letter_idx])
-        # plots.plot_letter(matrix_letters[letter_idx])
-        
+        title = "Letter " + letters[letter_idx]
+        # plots.plot_letter(matrix_letters[letter_idx], title)
+
+    # Comparar ortogonalidad
+    # C=matrix_letters[2].flatten()
+    # E=matrix_letters[4].flatten()
+    # norm_c=np.linalg.norm(C)
+    # norm_e=np.linalg.norm(E)
+    # cos_tita=(np.dot(C,E))/(norm_c*norm_e)
+    # arc_cos_tita = np.arccos(cos_tita)
+    # print("Angulo entre E y C: ", arc_cos_tita)
+
     # Inicializo con matrices de entrenamiento
     model = hopfield.Hopfield(epochs,5, train_matrix)
     
@@ -31,11 +41,11 @@ def ej2(epochs):
     noise_letter = create_noise(matrix_letters[noise_idx], noise_probability)
 
     # Print de letras noisy
-    plots.plot_letter(noise_letter)
+    plots.plot_letter(noise_letter, "Noisy Letter")
 
     # Devuelve el estado al que llego
     state = model.train(noise_letter)
-    plots.plot_letter(state)
+    plots.plot_letter(state, "Final State")
 
     return None
 

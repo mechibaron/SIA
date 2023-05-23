@@ -80,23 +80,24 @@ for i in range(len(countries)):
     ax.scatter(finalDf.loc[indicesToKeep, 'principal component 1']
                , finalDf.loc[indicesToKeep, 'principal component 2']
                , s = 50)
-    # ax.text(finalDf.loc[indicesToKeep, 'principal component 1']
-    #         , finalDf.loc[indicesToKeep, 'principal component 2']
-    #         , countries[i])
+    ax.text(finalDf.loc[indicesToKeep, 'principal component 1']
+            , finalDf.loc[indicesToKeep, 'principal component 2']
+            , countries[i])
 
-
-    
+print("PCA components",pca.components_[0:2, :])
 coeff = np.transpose(pca.components_[0:2, :])
 n = coeff.shape[0]
 for i in range(n):
     plt.arrow(0, 0, coeff[i,0], coeff[i,1],color = 'r',alpha = 0.5)
     plt.text(coeff[i,0]* 1.15, coeff[i,1] * 1.15, features[i], color = 'g', ha = 'center', va = 'center')
     
-ax.legend(countries)
+# ax.legend(countries)
 ax.grid()
 plt.show()
 
 principal_comp = finalDf['principal component 1'].tolist()
+print("principal component PCA: ", principal_comp)
+print("second principal component PCA: ", finalDf['principal component 2'].tolist())
 plt.bar(range(len(countries)), principal_comp)
 plt.title("PCA1 per country")
 plt.xlabel('Countries')

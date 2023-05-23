@@ -35,7 +35,7 @@ class Hopfield:
         for e in range(self.epochs):
             print("Iteration: ", e)
             # Si no converge continuo con hopfield
-            print(state_neurons)
+            # print(state_neurons)
             converge, idx = self.converge(state_neurons)
             previous_state = state_neurons
             state_neurons = self.hopfield(state_neurons)
@@ -64,9 +64,6 @@ class Hopfield:
         new_state = []
 
         for i in range(self.n):
-            print(i)
-            print(self.weights[i])
-            print(state_neurons)
             new_state.append(self.step_function(np.inner(self.weights[i], state_neurons)))
         self.state_energy.append(self.energy(new_state))
         return new_state
@@ -75,6 +72,7 @@ class Hopfield:
     def converge(self, state_neurons):
         for l in range(len(self.training_letters)):
             if (np.array_equal(self.training_letters[l], state_neurons) == True):
+                print("Found equal in training = ", l)
                 return True, l
         return False, -1
 
