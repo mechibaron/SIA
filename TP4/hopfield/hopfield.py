@@ -40,6 +40,9 @@ class Hopfield:
             previous_state = state_neurons
             state_neurons = self.hopfield(state_neurons)
             response = np.array(state_neurons).reshape((self.mu, self.mu))
+            title = 'State in epoch ' + str(e)
+            plots.plot_letter(response, title)
+            
 
             if(np.array_equal(previous_state, state_neurons) == True):
                 if (converge == True):
