@@ -1,4 +1,4 @@
 {    
     "learning_rate":0.5, 
-    "type_model": "oja"
+    "type_model": "kohonen"
 }

@@ -25,8 +25,8 @@ def ej2(epochs):
         # plots.plot_letter(matrix_letters[letter_idx], title)
 
     # Comparar ortogonalidad
-    # C=matrix_letters[2].flatten()
-    # E=matrix_letters[4].flatten()
+    # C=matrix_letters[10].flatten()
+    # E=matrix_letters[12].flatten()
     # norm_c=np.linalg.norm(C)
     # norm_e=np.linalg.norm(E)
     # cos_tita=(np.dot(C,E))/(norm_c*norm_e)

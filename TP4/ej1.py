@@ -30,6 +30,7 @@ def ej1(epochs):
         
         model = kohonen_alg.Kohonen(p, n, k, radio, learning_rate, similitud, epochs,training_set,country_name_train, categories)
         neurons_countries = model.train_kohonen()
+        print(neurons_countries)
         model.plot_heatmap(similitud, neurons_countries)
 
         # Categories Heatmap

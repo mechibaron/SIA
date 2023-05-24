@@ -141,10 +141,11 @@ class Kohonen:
         plt.show()
 
     def plot_category(self, categoryIdx, neurons_countries):
-        train_category = [fila[categoryIdx] for fila in self.X]
+        train_category = [fila[categoryIdx] for fila in self.standard(self.X)]
         fig, ax = plt.subplots(1, 1)
         cmap = matplotlib.colors.LinearSegmentedColormap.from_list("", ["white", "yellow", "green", "blue"])
         avg_matriz = np.zeros((self.k,self.k))
+
         for j in range(self.k**2):
             winner_pos = np.array(np.unravel_index(j, self.neurons.shape))
             country_label = ""
@@ -156,7 +157,7 @@ class Kohonen:
             avg_matriz[winner_pos[1], winner_pos[0]] = np.mean(avg_j)
         im = ax.imshow(avg_matriz, cmap=cmap)
         fig.colorbar(im)
-        plt.title(f'Grilla de neuronas de {self.k}x{self.k} para categoria: {self.categories[categoryIdx]}')
+        plt.title(f'Categoria: {self.categories[categoryIdx]}')
         ax.yaxis.set_major_locator(plt.NullLocator())  # remove y axis ticks
         ax.xaxis.set_major_locator(plt.NullLocator())  # remove x axis ticks
         plt.show()
@@ -246,29 +247,29 @@ class Kohonen:
         self.neurons = self.neurons_reshape.reshape(self.k,self.k)
         return neuron_country
 
-    def train_kohonen_per_category(self):
-        X_standard = self.standard_i(self.X)
-        neuron_activations = np.zeros((self.k**2, len(X_standard)))
-        neuron_country = np.zeros(len(X_standard))
-        for i in range(self.epochs):
-            print(i)
-            for j in range(len(X_standard)):
-                # Seleccionar un registro de entrada X^p
-                x = X_standard[j]
-                # Encontrar la neurona ganadora
-                winner_index = self.winner(x)
-                distances = self.activation(winner_index, i)
-                # Actualizar los pesos segun kohonen
-                self.regla_de_kohonen_per_category(distances, x)
-                neuron_activations[winner_index][j] = 1
+    # def train_kohonen_per_category(self):
+        # X_standard = self.standard_i(self.X)
+    #     neuron_activations = np.zeros((self.k**2, len(X_standard)))
+    #     neuron_country = np.zeros(len(X_standard))
+    #     for i in range(self.epochs):
+    #         print(i)
+    #         for j in range(len(X_standard)):
+    #             # Seleccionar un registro de entrada X^p
+    #             x = X_standard[j]
+    #             # Encontrar la neurona ganadora
+    #             winner_index = self.winner(x)
+    #             distances = self.activation(winner_index, i)
+    #             # Actualizar los pesos segun kohonen
+    #             self.regla_de_kohonen_per_category(distances, x)
+    #             neuron_activations[winner_index][j] = 1
 
-                print(f"Registro {j+1} asignado a la neurona {winner_index}")
-                neuron_country[j] = winner_index
-            # Ajuste de radio:
-            ajuste = self.radio[0] * (1 - i/self.epochs)
-            self.radio[1] = 1 if ajuste < 1 else ajuste
-            # Ajuste de ETA:
-            self.learning_rate[1] = self.learning_rate[0] * (1 - i/self.epochs)
+    #             print(f"Registro {j+1} asignado a la neurona {winner_index}")
+    #             neuron_country[j] = winner_index
+    #         # Ajuste de radio:
+    #         ajuste = self.radio[0] * (1 - i/self.epochs)
+    #         self.radio[1] = 1 if ajuste < 1 else ajuste
+    #         # Ajuste de ETA:
+    #         self.learning_rate[1] = self.learning_rate[0] * (1 - i/self.epochs)
 
-        self.neurons = self.neurons_reshape.reshape(self.k,self.k)
-        return neuron_country
+    #     self.neurons = self.neurons_reshape.reshape(self.k,self.k)
+    #     return neuron_country

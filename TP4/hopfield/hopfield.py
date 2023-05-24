@@ -67,7 +67,11 @@ class Hopfield:
         new_state = []
 
         for i in range(self.n):
-            new_state.append(self.step_function(np.inner(self.weights[i], state_neurons)))
+            step = self.step_function(np.inner(self.weights[i], state_neurons))
+            if(step!=0):
+                new_state.append(step)
+            else:
+                new_state.append(state_neurons[i])
         self.state_energy.append(self.energy(new_state))
         return new_state
         
@@ -89,7 +93,6 @@ class Hopfield:
     def step_function(self,h):
         if h < 0:
             return -1
-            
         elif h > 0:  
             return 1
         else:
