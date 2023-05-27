@@ -24,29 +24,54 @@ def ej2(epochs):
         title = "Letter " + letters[letter_idx]
         # plots.plot_letter(matrix_letters[letter_idx], title)
 
-    # Comparar ortogonalidad
-    # C=matrix_letters[10].flatten()
-    # E=matrix_letters[12].flatten()
-    # norm_c=np.linalg.norm(C)
-    # norm_e=np.linalg.norm(E)
-    # cos_tita=(np.dot(C,E))/(norm_c*norm_e)
-    # arc_cos_tita = np.arccos(cos_tita)
-    # print("Angulo entre E y C: ", arc_cos_tita)
+    # Comparar ortogonalidad en training
+    ortogonalidad = []
+    for i in train_letters_idx:
+        for j in train_letters_idx:
+            if(i!=j):
+                letter_1=matrix_letters[i].flatten()
+                letter_2=matrix_letters[j].flatten()
+                norm_1=np.linalg.norm(letter_1)
+                norm_2=np.linalg.norm(letter_2)
+                cos_tita=(np.dot(letter_1,letter_2))/(norm_1*norm_2)
+                arc_cos_tita = np.arccos(cos_tita)
+                ortogonalidad.append(arc_cos_tita)
+    print("Ortogonalidad between ", train_letters, sum(ortogonalidad)/len(ortogonalidad))
 
     # Inicializo con matrices de entrenamiento
     model = hopfield.Hopfield(epochs,5, train_matrix)
-    
-    # Noisy letters
-    noise_idx = get_letter_idx(letters, noisy_letter)
-    noise_letter = create_noise(matrix_letters[noise_idx], noise_probability)
+    iterations = 1
+    positive = 0
+    fake_positive = 0
+    negative = 0
+    for _ in range(iterations):
+        # Noisy letters
+        noise_idx = get_letter_idx(letters, noisy_letter)
+        noise_letter = create_noise(matrix_letters[noise_idx], noise_probability)
+        # Idx del arreglo de entrenamiento al que pertenece
+        train_noise_idx = get_letter_idx(train_letters, noisy_letter)
+        # Print de letras noisy
+        plots.plot_letter(noise_letter, "Noisy Letter")
 
-    # Print de letras noisy
-    plots.plot_letter(noise_letter, "Noisy Letter")
+        # Devuelve el estado al que llego, response e idx
+        response, state, idx = model.train(noise_letter)
+       
+        if (response == True):
+            if(idx == train_noise_idx):
+                # Entonces devuelve la letra a la que se aplico el ruido
+                positive+=1
+            else:
+                # Entonces devuelve una letra del entrenamiento que no es la que le aplico ruido
+                fake_positive+=1
+        else:
+            # Es otra cosa que no pertenece al train
+            negative+=1
 
-    # Devuelve el estado al que llego
-    state = model.train(noise_letter)
-    plots.plot_letter(state, "Final State")
-
+        plots.plot_letter(state, "Final State")
+    print("For probability: ", noise_probability)
+    print("Positivie: ", positive)
+    print("Fake Positivie: ", fake_positive)
+    print("Negative: ", negative)
     return None
 
 
@@ -67,4 +92,7 @@ def noise(number, noise_probability):
     return number
 
 def get_letter_idx(letters, letter):
-    return letters.index(letter)
+    if letter in letters:
+        return letters.index(letter)
+    else: 
+        return -1

@@ -32,6 +32,7 @@ class Hopfield:
         state_neurons = noise_letter.flatten()
         self.state_energy.append(self.energy(state_neurons))
         # print("weights: \n", self.weights)
+        index = -1
         for e in range(self.epochs):
             print("Iteration: ", e)
             # Si no converge continuo con hopfield
@@ -47,6 +48,7 @@ class Hopfield:
             if(np.array_equal(previous_state, state_neurons) == True):
                 if (converge == True):
                     response =  self.matrix_training_letters[idx]
+                    index = idx
                     break
                 else: 
                     break
@@ -61,7 +63,7 @@ class Hopfield:
         plt.show()
 
         # Si no encontre estado estable devuelvo false y el ultimo estado alcanzado
-        return response
+        return converge, response, index
 
     def hopfield(self, state_neurons):
         new_state = []

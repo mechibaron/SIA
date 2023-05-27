@@ -1,5 +1,5 @@
 {
-    "train_letters": ["A", "B","C", "D", "E", "F", "G", "H", "I","J", "K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"],
-    "noisy_letter":"N",
-    "noise_probability":0.5
+    "train_letters": ["U", "I", "M", "K"],
+    "noisy_letter":"U",
+    "noise_probability":0.3
   }

@@ -11,7 +11,6 @@ if __name__ == '__main__':
   epochs, exercise = utils.getDataFromFile(data)
   if exercise == 1:
     ej1(epochs)
-  
   else:
     ej2(epochs)
 
