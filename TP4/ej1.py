@@ -38,7 +38,7 @@ def ej1(epochs):
             model.plot_category(categoryIdx, neurons_countries)
 
         # Matriz U
-        model.plot_u_matrix(similitud)
+        # model.plot_u_matrix(similitud)
 
         # Categories Train
         # for categoryIdx in range(len(categories)):
