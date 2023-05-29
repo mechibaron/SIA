@@ -145,27 +145,27 @@ def ej1(epochs):
 
         # BIPLOT
         # Compute the second component
-        second_component = np.dot(X_standard, sorted_eigenvectors[:, 1])
-        # Compute the first component
-        first_component = np.dot(X_standard, sorted_eigenvectors[:, 0])
+        # second_component = np.dot(X_standard, sorted_eigenvectors[:, 1])
+        # # Compute the first component
+        # first_component = np.dot(X_standard, sorted_eigenvectors[:, 0])
 
-        components_df = pd.DataFrame({'Component 1': first_component, 'Component 2': second_component, 'Country': countries})
+        # components_df = pd.DataFrame({'Component 1': first_component, 'Component 2': second_component, 'Country': countries})
 
-        # Plot the biplot
-        plt.figure(figsize=(10, 10))
-        num_points = len(components_df)
-        unique_colors = plt.cm.Set1(np.linspace(0, 1, num_points))
-        plt.scatter(components_df['Component 1'], components_df['Component 2'], marker='o',color=unique_colors)
-        plt.title("2 component OJA")
-        plt.xlabel("Principal Component 1", fontsize = 15)
-        plt.ylabel("Principal Component 2", fontsize = 15)
-        plt.grid()
-        # Add variable vectors (feature loadings) as arrows
-        for i, feature in enumerate(features):
-            plt.arrow(0, 0, sorted_eigenvectors[i, 0], sorted_eigenvectors[i, 1], color='r', alpha=0.5)
-            plt.text(sorted_eigenvectors[i, 0] * 1.15, sorted_eigenvectors[i, 1] * 1.15, feature, color = 'g', ha = 'center', va = 'center')
+        # # Plot the biplot
+        # plt.figure(figsize=(10, 10))
+        # num_points = len(components_df)
+        # unique_colors = plt.cm.Set1(np.linspace(0, 1, num_points))
+        # plt.scatter(components_df['Component 1'], components_df['Component 2'], marker='o',color=unique_colors)
+        # plt.title("2 component OJA")
+        # plt.xlabel("Principal Component 1", fontsize = 15)
+        # plt.ylabel("Principal Component 2", fontsize = 15)
+        # plt.grid()
+        # # Add variable vectors (feature loadings) as arrows
+        # for i, feature in enumerate(features):
+        #     plt.arrow(0, 0, sorted_eigenvectors[i, 0], sorted_eigenvectors[i, 1], color='r', alpha=0.5)
+        #     plt.text(sorted_eigenvectors[i, 0] * 1.15, sorted_eigenvectors[i, 1] * 1.15, feature, color = 'g', ha = 'center', va = 'center')
 
-        # Add country labels to the points
-        for i, country in enumerate(components_df['Country']):
-            plt.annotate(country, (components_df['Component 1'][i], components_df['Component 2'][i]))    
-        plt.show()
+        # # Add country labels to the points
+        # for i, country in enumerate(components_df['Country']):
+        #     plt.annotate(country, (components_df['Component 1'][i], components_df['Component 2'][i]))    
+        # plt.show()
