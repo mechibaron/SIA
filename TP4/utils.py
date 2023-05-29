@@ -1,7 +1,5 @@
 import csv
 import numpy as np
-from constants import FIRST, LAST, MIDDLE
-from multilayer.multilayer_perceptron import MultilayerPerceptron
 
 
 def getDataFromFile(data):
