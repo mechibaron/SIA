@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from multilayer.layer import Layer
-from constants import *
 from multilayer.activation_functions import Activation
 
 
@@ -70,12 +69,12 @@ class MultilayerPerceptron:
         # print("ACCURACY: \n", acc_epochs)
 
         # print("Errores: ", errors_among_epochs)
-        plt.plot(list(range(0,epochs)), errors_among_epochs)
-        plt.title("Error vs Epochs, Learning rate 0.01")
-        # plt.xlim(0, 200)
-        plt.xlabel("Epochs")
-        plt.ylabel("Error")
-        plt.show()
+        # plt.plot(list(range(0,epochs)), errors_among_epochs)
+        # plt.title("Error vs Epochs, Learning rate 0.01")
+        # # plt.xlim(0, 200)
+        # plt.xlabel("Epochs")
+        # plt.ylabel("Error")
+        # plt.show()
 
     def get_accuracy(real_output, expected_output, criteria = None):
         results = np.zeros(2)
@@ -159,3 +158,6 @@ class MultilayerPerceptron:
             self.propagate(test_set[i])
             output.append([neuron.activation for neuron in self.layers[len(self.layers) - 1].neurons])
         return output
+    def test(self, test_set):
+        self.propagate(test_set)
+        return [neuron.activation for neuron in self.layers[len(self.layers) - 1].neurons]

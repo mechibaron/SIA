@@ -1,8 +1,10 @@
 import numpy as np
-from constants import *
 from multilayer.activation_functions import Activation
 
-
+BIAS = 1
+FIRST = 0
+MIDDLE = 1
+LAST = 2
 
 class Neuron:
     excitation = 0
@@ -16,6 +18,8 @@ class Neuron:
             self.weights = np.random.uniform(-1, 1, prev_layer_neurons)
 
     def excite(self, prev_layer_activations):
+        # print(self.weights)
+        # print(prev_layer_activations)
         self.excitation = np.inner(self.weights, prev_layer_activations) + BIAS
         return self.excitation
 

@@ -1,5 +1,4 @@
 from multilayer.neuron import Neuron
-from constants import *
 import numpy as np
 
 
@@ -13,6 +12,7 @@ class Layer:
 
     def set_activations(self, training_set):
         # Training set: [0, 1, -1]
+        # print(len(self.neurons))
         for i in range(len(self.neurons)):
             self.neurons[i].activation = training_set[i]
 
