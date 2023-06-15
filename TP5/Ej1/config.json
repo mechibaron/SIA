@@ -1,5 +1,5 @@
 {
-    "epochs": 500, 
+    "epochs": 10, 
     "learning_rate":0.005,
     "batch_size": 1,
     "latent_size" : [20,10]
