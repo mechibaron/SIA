@@ -1,0 +1,5 @@
+{
+    "momentum":true,
+    "eta":0.0005,
+    "epochs":10000
+}
