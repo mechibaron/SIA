@@ -1,6 +1,6 @@
 from tensorflow import keras
 
-from ..multilayer.variational_autoencoder import VariationalAutoencoder
+from .src.variational_autoencoder import VariationalAutoencoder
 from src.plotting import *
 # import certifi
 from src.plotting import *
