@@ -159,7 +159,9 @@ def plot_error_by_epochs():
 
     print(errors)
     x_plot = [i for i in range(10000)]
-    y_plot = errors
+    # y_plot = errors #error
+    y_plot = [np.mean(values) for values in error.values()] #mean error
+
 
     # Plot scatter
     plt.scatter(x_plot, y_plot)
@@ -235,4 +237,4 @@ def vary_hidden_layer():
     plt.show()
 
 if __name__ == '__main__':
-    vary_hidden_layer()
+    plot_error_by_epochs()
