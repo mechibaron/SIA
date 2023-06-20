@@ -1,8 +1,11 @@
+from src.utils import getSample
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
-from tensorflow.keras import layers
-from utils import *
+# from tensorflow.keras import layers
+from tensorflow.python import keras
+from keras import layers
+
 
 class VariationalAutoencoder(keras.Model):
 

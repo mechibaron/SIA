@@ -1,6 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from ...multilayer.multilayer_perceptron import *
+import sys
+sys.path.append("..")
+from multilayer.multilayer_perceptron import *
+
 
 def plotAverages(vae, data, labels):
     avg,_,_ = vae.encoder.predict(data)

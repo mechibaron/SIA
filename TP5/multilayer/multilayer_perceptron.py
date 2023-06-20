@@ -1,6 +1,6 @@
 import numpy as np
 import random
-from src.methods import *
+from multilayer.methods import *
 
 class MultilayerPerceptron:
     def __init__(self, neuron_layers, eta=0.001, delta=0.05, init_layers=True, momentum=False):
