@@ -4,7 +4,6 @@ import sys
 sys.path.append("..")
 from multilayer.multilayer_perceptron import *
 from multilayer.layer import Layer
-# from ..multilayer.multilayer_perceptron import *
 from res.fonts import *
 from src.utils import *
 import json
