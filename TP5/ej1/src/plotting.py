@@ -2,8 +2,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import json
 import utils_1
-from ...multilayer.layer import Layer
-from ...multilayer.multilayer_perceptron import *
+import sys
+sys.path.append("..")
+from multilayer.multilayer_perceptron import *
+from multilayer.layer import Layer
 from src.utils import *
 
 # plotea para distinta cantidad de epocas el promedio del error en epocas (por ej para 10 epocas tengo un array de errores por epoca -> un promedio de esos valores)
