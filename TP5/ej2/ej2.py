@@ -1,7 +1,23 @@
 from tensorflow import keras
 
-from src.variational_autoencoder import VariationalAutoencoder
+from ..multilayer.variational_autoencoder import VariationalAutoencoder
 from src.plotting import *
+# import certifi
+from src.plotting import *
+# from keras.datasets import imdb
+# from keras.datasets import reuters
+import requests
+requests.packages.urllib3.disable_warnings()
+import ssl
+
+try:
+    _create_unverified_https_context = ssl._create_unverified_context
+except AttributeError:
+    # Legacy Python that doesn't verify HTTPS certificates by default
+    pass
+else:
+    # Handle target environment that doesn't support HTTPS verification
+    ssl._create_default_https_context = _create_unverified_https_context
 
 (x_train, y_train), (x_test, y_test) = keras.datasets.mnist.load_data()
 trainset = np.concatenate([x_train, x_test], axis=0)

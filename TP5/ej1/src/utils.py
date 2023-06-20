@@ -3,8 +3,6 @@ import matplotlib.pyplot as plt
 from res.fonts import *
 import random
 import tensorflow as tf
-from tensorflow import keras
-from tensorflow.keras import layers
 
 def print_letter(letter):
     test = np.array_split(letter, 5)
