@@ -1,7 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from ..multilayer.layer import Layer
-from ..multilayer.multilayer_perceptron import *
+import sys
+sys.path.append("..")
+from multilayer.multilayer_perceptron import *
+from multilayer.layer import Layer
+# from ..multilayer.layer import Layer
+# from ..multilayer.multilayer_perceptron import *
 from res.fonts import *
 from src.utils import *
 import utils_1
@@ -13,7 +17,7 @@ with open('./config.json', 'r') as f:
 
 momentum, eta, epochs = utils_1.getDataFromFile(data)
 
-x = np.array(get_input(1))
+x = np.array(get_input(2))
 x = [x[6], x[11], x[19], x[9], x[10]]
 x = np.array(x)
 

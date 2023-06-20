@@ -1,5 +1,5 @@
 import numpy as np
-from src.methods import *
+from multilayer.methods import *
 
 class Layer:
     def __init__(self, neurons_qty, inputs=None, activation="tanh"):
