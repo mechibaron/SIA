@@ -107,9 +107,11 @@ def plot_error_by_epochs():
 
     error = []
 
+    epoch = 10000
+
     encoderDecoder = MultilayerPerceptron(layers, init_layers=True, momentum=momentum, eta=eta)
 
-    min_error, errors, epochs, training_accuracies = encoderDecoder.train(x, x, iterations_qty=10000, adaptative_eta=False)
+    min_error, errors, epochs, training_accuracies = encoderDecoder.train(x, x, iterations_qty=epoch, adaptative_eta=False)
 
     encoder = MultilayerPerceptron(encoderDecoder.neuron_layers[0:int(len(layers)/2)], init_layers=False)
 
@@ -127,7 +129,7 @@ def plot_error_by_epochs():
         error.append(calculate_error(to_predict, decoded))
 
     print(errors)
-    x_plot = [i for i in range(10000)]
+    x_plot = [i for i in range(epoch)]
     # y_plot = errors #error
     y_plot = [np.mean(values) for values in error.values()] #mean error
 
@@ -149,61 +151,61 @@ def calculate_error(to_predict, decoded):
         error += (to_predict[i] - decoded[i])**2
     return error/len(to_predict)
 
-def vary_hidden_layer():
-    with open('./config.json', 'r') as f:
-        data = json.load(f)
-        f.close()
+# def vary_hidden_layer():
+#     with open('./config.json', 'r') as f:
+#         data = json.load(f)
+#         f.close()
 
-    momentum, eta, epochs = utils_1.getDataFromFile(data)
+#     momentum, eta, epochs = utils_1.getDataFromFile(data)
 
-    x = np.array(get_input(1))
-    text_names = get_header(1)
+#     x = np.array(get_input(1))
+#     text_names = get_header(1)
 
-    x_mean = np.mean(x, axis=0)
-    x_std = np.std(x, axis=0)
+#     x_mean = np.mean(x, axis=0)
+#     x_std = np.std(x, axis=0)
 
-    x = transform(x)
+#     x = transform(x)
 
-    layer1 = Layer(20, 35, activation="tanh")
-    layer2 = Layer(10, activation="tanh")
-    layer3 = Layer(2, activation="tanh")
-    layer4 = Layer(10, activation="tanh")
-    layer5 = Layer(20, activation="tanh")
-    layer6 = Layer(35, activation="tanh")
+#     layer1 = Layer(20, 35, activation="tanh")
+#     layer2 = Layer(10, activation="tanh")
+#     layer3 = Layer(2, activation="tanh")
+#     layer4 = Layer(10, activation="tanh")
+#     layer5 = Layer(20, activation="tanh")
+#     layer6 = Layer(35, activation="tanh")
 
-    layers = [layer1,layer2, layer3, layer4, layer5,layer6]
+#     layers = [layer1,layer2, layer3, layer4, layer5,layer6]
 
-    error = []
+#     error = []
 
-    encoderDecoder = MultilayerPerceptron(layers, init_layers=True, momentum=momentum, eta=eta)
+#     encoderDecoder = MultilayerPerceptron(layers, init_layers=True, momentum=momentum, eta=eta)
 
-    min_error, errors, epochs, training_accuracies = encoderDecoder.train(x, x, iterations_qty=10000, adaptative_eta=False)
+#     min_error, errors, epochs, training_accuracies = encoderDecoder.train(x, x, iterations_qty=10000, adaptative_eta=False)
 
-    encoder = MultilayerPerceptron(encoderDecoder.neuron_layers[0:int(len(layers)/2)], init_layers=False)
+#     encoder = MultilayerPerceptron(encoderDecoder.neuron_layers[0:int(len(layers)/2)], init_layers=False)
 
-    decoder = MultilayerPerceptron(encoderDecoder.neuron_layers[int(len(layers)/2):], init_layers=False)
+#     decoder = MultilayerPerceptron(encoderDecoder.neuron_layers[int(len(layers)/2):], init_layers=False)
 
-    aux_1 = []
-    aux_2 = []
+#     aux_1 = []
+#     aux_2 = []
 
-    for j in range(len(x)):
-        to_predict = x[j, :]
-        # print("Predict: \n",to_predict)
-        encoded = encoder.predict(to_predict)
-        decoded = decoder.predict(encoded)
-        # print("Decoded: \n",decoded)
-        # print(i, calculate_error(to_predict, decoded))
-        graph_digits(to_predict, decoded)
-        print(j)
-        aux_1.append(encoded[0])
-        aux_2.append(encoded[1])
+#     for j in range(len(x)):
+#         to_predict = x[j, :]
+#         # print("Predict: \n",to_predict)
+#         encoded = encoder.predict(to_predict)
+#         decoded = decoder.predict(encoded)
+#         # print("Decoded: \n",decoded)
+#         # print(i, calculate_error(to_predict, decoded))
+#         graph_digits(to_predict, decoded)
+#         print(j)
+#         aux_1.append(encoded[0])
+#         aux_2.append(encoded[1])
 
-    # plt.xlim([-1.1, 1.1])
-    # plt.ylim([-1.1, 1.1])
-    # for i, txt in enumerate(text_names):
-    #     plt.annotate(txt, (aux_1[i], aux_2[i]))
-    # plt.scatter(aux_1, aux_2)
-    plt.show()
+#     # plt.xlim([-1.1, 1.1])
+#     # plt.ylim([-1.1, 1.1])
+#     # for i, txt in enumerate(text_names):
+#     #     plt.annotate(txt, (aux_1[i], aux_2[i]))
+#     # plt.scatter(aux_1, aux_2)
+#     plt.show()
 
 if __name__ == '__main__':
     plot_error_by_epochs()
