@@ -7,7 +7,6 @@ from multilayer.multilayer_perceptron import *
 
 def plotAverages(vae, data, labels):
     avg,_,_ = vae.encoder.predict(data)
-    print("AVG:", avg)
     colormap = plt.cm.get_cmap('plasma')
     plt.figure(figsize=(12, 10))
     sc = plt.scatter(avg[:, 0], avg[:, 1], c=labels, cmap=colormap)
