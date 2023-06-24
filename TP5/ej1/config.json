@@ -1,5 +1,5 @@
 {
     "momentum":true,
     "eta":0.0005,
-    "epochs":100
+    "epochs":1000
 }
