@@ -30,6 +30,15 @@ class MultilayerPerceptron:
         for i in range(len(self.neuron_layers)):
             res = self.neuron_layers[i].forward(res)
         return res
+    
+    def predict_layer(self, a_input):
+        res = a_input
+        for i in range(len(self.neuron_layers)):
+            if(i == len(self.neuron_layers)/2):
+                latent_layer_predict = res
+            res = self.neuron_layers[i].forward(res)
+            
+        return res, latent_layer_predict
 
     def calculate_mean_square_error(self, training_set, expected_set):
         su = 0
@@ -71,6 +80,7 @@ class MultilayerPerceptron:
         training_accuracies = []
         epochs = []
         eta_iteration = 0
+        # latent_layer
         while ii < iterations_qty and Error > error_epsilon:
             j = 0
             training_correct_cases = 0
@@ -78,8 +88,8 @@ class MultilayerPerceptron:
                 x = training_set[shuffled_list[j]]
                 y = expected_set[shuffled_list[j]]
 
-                predicted_value = self.predict(x)  # forward propagation
-
+                predicted_value, latent_layer = self.predict_layer(x)  # forward propagation
+                
                 error = self.back_propagate(predicted_value, x, y)
                 aux_training = 0
 
@@ -119,4 +129,4 @@ class MultilayerPerceptron:
             epochs.append(ii)
             ii += 1
 
-        return min_error, errors, epochs, training_accuracies
+        return min_error, errors, epochs, training_accuracies, latent_layer
